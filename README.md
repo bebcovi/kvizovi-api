@@ -1,4 +1,4 @@
-# Kvizovi API
+# Kvizovi API [![travis](https://travis-ci.org/twin/kvizovi-api.svg)](https://travis-ci.org/twin/kvizovi-api)
 
 ## Table of contents
 
