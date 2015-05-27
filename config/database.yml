@@ -1,0 +1,18 @@
+defaults: &defaults
+  adapter: postgres
+  encoding: unicode
+  pool: 5
+  min_messages: warning
+  host: localhost
+
+production:
+  <<: *defaults
+  database: kvizovi
+
+development:
+  <<: *defaults
+  database: kvizovi_development
+
+test:
+  <<: *defaults
+  database: kvizovi_test

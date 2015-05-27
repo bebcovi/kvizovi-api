@@ -1,0 +1,16 @@
+language: ruby
+
+rvm: "2.2"
+
+cache: bundler
+
+addons:
+  postgresql: "9.4"
+
+env:
+  global:
+    - "USER=postgres"
+
+before_script:
+  - "psql -c 'create database kvizovi_test;' -U postgres"
+  - "bundle exec rake db:migrate"
