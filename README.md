@@ -399,7 +399,7 @@ Content-Type: application/json
   "data": {
     "type": "questions",
     "attributes": {
-      "type": "choice"
+      "type": "choice",
       "title": "Stannis won the battle at Blackwater Bay.",
     }
   }
@@ -485,7 +485,7 @@ Authorization: Token token="fg0d9sl"
       "answers": {},
       "start": "2015-05-03T21:17:30+02:00",
       "finish": "2015-05-03T21:20:30+02:00",
-    }
+    },
     "links": {
       "quiz": {
         "linkage": {"type": "quizzes", "id": "32"}
