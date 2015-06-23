@@ -1,5 +1,6 @@
 require "kvizovi/models/base"
 require "kvizovi/configuration/refile"
+require "kvizovi/elasticsearch"
 
 module Kvizovi
   module Models
@@ -8,6 +9,17 @@ module Kvizovi
 
       extend Refile::Sequel::Attachment
       attachment :image
+
+      def after_save
+        super
+        ElasticsearchIndex[:quiz].index(quiz)
+      end
+
+      def after_destroy
+        super
+        quiz.questions(true)
+        ElasticsearchIndex[:quiz].index(quiz)
+      end
     end
   end
 end

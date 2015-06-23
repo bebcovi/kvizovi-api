@@ -3,26 +3,20 @@ require "kvizovi/mediators/quizzes"
 
 Quizzes = Kvizovi::Mediators::Quizzes
 
-class QuizzesTest < UnitTest
+class QuizzesTest < Minitest::Test
+  include TestHelpers::Unit
+
   def setup
     super
     @user = create(:janko)
     @quizzes = Quizzes.new(@user)
   end
 
-  def test_search_quiz_name
+  def test_search_by_query
+    Kvizovi::ElasticsearchIndex.noop = false
     quiz = @quizzes.create(attributes_for(:quiz, name: "Game of Thrones"))
 
     assert_equal [quiz], Quizzes.search(q: "game").to_a
-  end
-
-  def test_search_questions
-    quiz = @quizzes.create(attributes_for(:quiz, questions_attributes: [
-      attributes_for(:question, title: "Stannis Baratheon won Blackwater Bay"),
-      attributes_for(:question, title: "Lannisters won Blackwater Bay"),
-    ]))
-
-    assert_equal [quiz], Quizzes.search(q: "blackwater").to_a
   end
 
   def test_search_by_category
@@ -40,6 +34,7 @@ class QuizzesTest < UnitTest
   end
 
   def test_search_active
+    Kvizovi::ElasticsearchIndex.noop = false
     quiz = @quizzes.create(attributes_for(:quiz, active: false))
 
     assert_equal [], Quizzes.search(q: "").to_a

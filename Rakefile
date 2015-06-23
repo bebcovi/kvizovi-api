@@ -32,16 +32,33 @@ namespace :db do
       args += %W[--migrate-version #{migrate}] if String === migrate
     end
 
-    args += %W[--env #{ENV["RACK_ENV"] || "test"} config/database.yml]
+    sh ["sequel", *args, "--env test", "config/database.yml"].join(" ")
+    sh ["sequel", *args, "--env development", "config/database.yml"].join(" ")
+  end
+end
 
-    sh ["sequel", *args].join(" ")
+namespace :elastic do
+  desc "Create Elaticsearch index and import the records"
+  task :setup => [:create, :import]
+
+  desc "Create the Elasticsearch index"
+  task :create do
+    require "kvizovi"
+    Kvizovi::ElasticsearchIndex.create!
+  end
+
+  desc "Import all existing quizzes to Elasticsearch"
+  task :import do
+    require "kvizovi"
+    Kvizovi::Models::Quiz.dataset.each_page(1000) do |quizzes|
+      Kvizovi::ElasticsearchIndex[:quiz].index(quizzes)
+    end
   end
 end
 
 desc "Start the console with app loaded, in sandbox mode"
 task :console do
   ARGV.clear
-  ENV["RACK_ENV"] = "test"
 
   require "kvizovi"
   require "pry"
@@ -49,5 +66,5 @@ task :console do
 
   include Kvizovi::Models
   DB.logger = Logger.new(STDOUT)
-  DB.transaction(rollback: :always) { Pry.start }
+  Pry.start
 end

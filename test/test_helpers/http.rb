@@ -33,5 +33,9 @@ module TestHelpers
     def basic_auth(username, password)
       {"HTTP_AUTHORIZATION" => "Basic #{["#{username}:#{password}"].pack("m*")}"}
     end
+
+    def image
+      Rack::Test::UploadedFile.new("test/fixtures/image.jpg")
+    end
   end
 end

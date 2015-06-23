@@ -3,7 +3,9 @@ require "kvizovi/mediators/questions"
 
 Questions = Kvizovi::Mediators::Questions
 
-class QuestionsTest < UnitTest
+class QuestionsTest < Minitest::Test
+  include TestHelpers::Unit
+
   def setup
     super
     @quiz = create(:quiz)

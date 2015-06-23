@@ -1,5 +1,5 @@
 require "kvizovi/finders/base_finder"
-require "kvizovi/finders/question_finder"
+require "kvizovi/elasticsearch"
 
 module Kvizovi
   module Finders
@@ -15,10 +15,8 @@ module Kvizovi
       end
 
       def from_query(query)
-        dataset.where {
-          (name =~ /#{query}/i) |
-          (id =~ QuestionFinder.from_query(query).select(:quiz_id))
-        }
+        quiz_documents = ElasticsearchIndex[:quiz].search(query)
+        dataset.where(id: quiz_documents.map { |h| h.fetch("id") })
       end
 
       def all

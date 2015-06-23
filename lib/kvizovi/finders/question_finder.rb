@@ -12,13 +12,6 @@ module Kvizovi
       def find(id)
         find_by_id(id)
       end
-
-      def from_query(query)
-        dataset.where {
-          (title =~ /#{query}/i) |
-          (content.cast(:text) =~ /#{query}/i)
-        }
-      end
     end
   end
 end

@@ -3,7 +3,9 @@ require "kvizovi/mediators/gameplays"
 
 Gameplays = Kvizovi::Mediators::Gameplays
 
-class GameplaysTest < UnitTest
+class GameplaysTest < Minitest::Test
+  include TestHelpers::Unit
+
   def setup
     super
     @user = create(:janko)

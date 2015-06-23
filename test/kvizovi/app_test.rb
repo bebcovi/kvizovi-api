@@ -3,7 +3,14 @@ require "integration"
 require "pry"
 require "mini_magick"
 
-class AppTest < IntegrationTest
+class AppTest < Minitest::Test
+  include TestHelpers::Integration
+
+  def setup
+    super
+    Kvizovi::ElasticsearchIndex.noop = false
+  end
+
   def email
     attributes_for(:janko)[:email]
   end

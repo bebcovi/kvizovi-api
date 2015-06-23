@@ -1,5 +1,6 @@
 require "kvizovi/models/base"
 require "kvizovi/configuration/refile"
+require "kvizovi/elasticsearch"
 
 module Kvizovi
   module Models
@@ -16,6 +17,11 @@ module Kvizovi
         quizzes_dataset.destroy
         gameplays_dataset.destroy
         super
+      end
+
+      def after_save
+        super
+        ElasticsearchIndex[:quiz].index(quizzes)
       end
     end
   end

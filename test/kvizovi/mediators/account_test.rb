@@ -8,7 +8,9 @@ SimpleMailer.test_mode!
 
 Account = Kvizovi::Mediators::Account
 
-class RegistrationTest < UnitTest
+class RegistrationTest < Minitest::Test
+  include TestHelpers::Unit
+
   def test_mass_assignment
     assert_raises(Sequel::MassAssignmentRestriction) do
       Account.register!(created_at: Time.now)
@@ -55,7 +57,9 @@ class RegistrationTest < UnitTest
   end
 end
 
-class AuthenticationTest < UnitTest
+class AuthenticationTest < Minitest::Test
+  include TestHelpers::Unit
+
   def setup
     super
     @user = Account.register!(attributes_for(:janko))
@@ -106,7 +110,9 @@ class AuthenticationTest < UnitTest
   end
 end
 
-class PasswordResetTest < UnitTest
+class PasswordResetTest < Minitest::Test
+  include TestHelpers::Unit
+
   def setup
     super
     @user = Account.register!(attributes_for(:janko))
@@ -131,7 +137,9 @@ class PasswordResetTest < UnitTest
   end
 end
 
-class PasswordSetTest < UnitTest
+class PasswordSetTest < Minitest::Test
+  include TestHelpers::Unit
+
   def setup
     super
     @user = Account.register!(attributes_for(:janko))
@@ -160,7 +168,9 @@ class PasswordSetTest < UnitTest
   end
 end
 
-class AccountUpdateTest < UnitTest
+class AccountUpdateTest < Minitest::Test
+  include TestHelpers::Unit
+
   def setup
     super
     @user = Account.register!(attributes_for(:janko))
@@ -194,7 +204,9 @@ class AccountUpdateTest < UnitTest
   end
 end
 
-class AccountDestructionTest < UnitTest
+class AccountDestructionTest < Minitest::Test
+  include TestHelpers::Unit
+
   def setup
     super
     @user = Account.register!(attributes_for(:janko))
