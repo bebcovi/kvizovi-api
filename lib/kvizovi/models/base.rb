@@ -19,8 +19,6 @@ Sequel::Model.plugin :nested_attributes
 Sequel::Model.plugin :pg_array_associations
 Sequel::Model.plugin :tactical_eager_loading
 
-Sequel.extension :inflector
-
 module Kvizovi
   module Models
     Base = Sequel::Model

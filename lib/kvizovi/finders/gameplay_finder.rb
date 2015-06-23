@@ -3,6 +3,8 @@ require "kvizovi/finders/base_finder"
 module Kvizovi
   module Finders
     class GameplayFinder < BaseFinder
+      model Models::Gameplay
+
       def search(user:, as:, quiz_id: nil, page: nil, **)
         gameplays = send("all_for_#{as}", user)
         gameplays = gameplays.where(quiz_id: quiz_id) if quiz_id

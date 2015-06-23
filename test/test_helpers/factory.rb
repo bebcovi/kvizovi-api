@@ -20,18 +20,19 @@ module TestHelpers
 
     FACTORIES = {
       janko: [:User, {
-        nickname: "Junky",
+        name: "Junky",
         email: "janko.marohnic@gmail.com",
         password: "secret",
       }],
       matija: [:User, {
-        nickname: "Silvenon",
+        name: "Silvenon",
         email: "matija.marohnic@gmail.com",
         password: "secret",
       }],
       quiz: [:Quiz, {
         name: "Game of Thrones",
         category: "movies",
+        active: true,
       }],
       question: [:Question, {
         type: "choice",

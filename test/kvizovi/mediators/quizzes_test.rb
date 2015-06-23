@@ -5,6 +5,7 @@ Quizzes = Kvizovi::Mediators::Quizzes
 
 class QuizzesTest < UnitTest
   def setup
+    super
     @user = create(:janko)
     @quizzes = Quizzes.new(@user)
   end
@@ -30,12 +31,18 @@ class QuizzesTest < UnitTest
     assert_equal [quiz], Quizzes.search(category: "movies").to_a
   end
 
-  def test_pagination
+  def test_search_pagination
     quiz1 = @quizzes.create(attributes_for(:quiz))
     quiz2 = @quizzes.create(attributes_for(:quiz))
 
     assert_equal [quiz1], Quizzes.search(page: {number: 1, size: 1}).to_a
     assert_equal [quiz2], Quizzes.search(page: {number: 2, size: 1}).to_a
+  end
+
+  def test_search_active
+    quiz = @quizzes.create(attributes_for(:quiz, active: false))
+
+    assert_equal [], Quizzes.search(q: "").to_a
   end
 
   def test_generic_finding

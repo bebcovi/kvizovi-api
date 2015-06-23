@@ -5,6 +5,7 @@ Gameplays = Kvizovi::Mediators::Gameplays
 
 class GameplaysTest < UnitTest
   def setup
+    super
     @user = create(:janko)
     @quiz = create(:quiz, creator: @user)
     @gameplays = Gameplays.new(@user)

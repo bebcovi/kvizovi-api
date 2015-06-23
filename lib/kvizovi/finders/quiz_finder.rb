@@ -4,8 +4,10 @@ require "kvizovi/finders/question_finder"
 module Kvizovi
   module Finders
     class QuizFinder < BaseFinder
+      model Models::Quiz
+
       def search(q: nil, category: nil, page: nil, **)
-        quizzes = dataset
+        quizzes = dataset.active
         quizzes = new(quizzes).from_query(q) if q
         quizzes = new(quizzes).with_category(category) if category
         quizzes = new(quizzes).paginate(page) if page

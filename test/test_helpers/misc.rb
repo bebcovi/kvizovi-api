@@ -1,6 +1,3 @@
-require "uri"
-require "logger"
-
 module TestHelpers
   module Misc
     def sent_emails
@@ -10,6 +7,7 @@ module TestHelpers
     end
 
     def email_link
+      require "uri"
       last_message = sent_emails.last[:message]
       url = last_message[%r{http://\S+$}]
       URI(url).request_uri
@@ -20,9 +18,17 @@ module TestHelpers
     end
 
     def log
+      require "logger"
       DB.logger = Logger.new(STDOUT)
       yield
       DB.logger = Logger.new(nil)
+    end
+
+    def profile(&block)
+      require "ruby-prof"
+      result = RubyProf.profile(&block)
+      printer = RubyProf::CallStackPrinter.new(result)
+      File.open("profile.html", "w") { |file| printer.print(file) }
     end
   end
 end

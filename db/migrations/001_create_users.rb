@@ -3,7 +3,7 @@ Sequel.migration do
     create_table :users do
       primary_key :id
 
-      column :nickname,           :varchar
+      column :name,               :varchar
       column :avatar_id,          :varchar
       column :email,              :varchar
       column :encrypted_password, :varchar

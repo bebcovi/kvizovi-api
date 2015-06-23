@@ -14,7 +14,10 @@ class UnitTest < Minitest::Test
     else
       super
     end
+  end
 
+  def teardown
+    super
     SimpleMailer.emails_sent.clear if defined?(SimpleMailer)
   end
 end

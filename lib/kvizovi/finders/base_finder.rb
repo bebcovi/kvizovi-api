@@ -8,13 +8,12 @@ module Kvizovi
         new(model.dataset).send(name, *args, &block)
       end
 
-      def self.respond_to_missing?(symbol, include_all = false)
-        new(model.dataset).respond_to?(symbol, include_all)
-      end
-
-      def self.model
-        model_name = name.chomp("Finder").demodulize
-        Models.const_get(model_name)
+      def self.model(klass = nil)
+        if klass
+          @model = klass
+        else
+          @model
+        end
       end
 
       def initialize(dataset)
@@ -42,7 +41,7 @@ module Kvizovi
       end
 
       def not_found!(id)
-        model_name = self.class.model.name.demodulize
+        model_name = self.class.model.name.split("::").first
         raise Kvizovi::Error::NotFound, "#{model_name} with id #{id} not found"
       end
     end

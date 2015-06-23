@@ -57,6 +57,7 @@ end
 
 class AuthenticationTest < UnitTest
   def setup
+    super
     @user = Account.register!(attributes_for(:janko))
   end
 
@@ -107,6 +108,7 @@ end
 
 class PasswordResetTest < UnitTest
   def setup
+    super
     @user = Account.register!(attributes_for(:janko))
   end
 
@@ -131,6 +133,7 @@ end
 
 class PasswordSetTest < UnitTest
   def setup
+    super
     @user = Account.register!(attributes_for(:janko))
     @user = Account.reset_password!(@user.email)
   end
@@ -159,6 +162,7 @@ end
 
 class AccountUpdateTest < UnitTest
   def setup
+    super
     @user = Account.register!(attributes_for(:janko))
     @user.password = nil
     @account = Account.new(@user)
@@ -192,6 +196,7 @@ end
 
 class AccountDestructionTest < UnitTest
   def setup
+    super
     @user = Account.register!(attributes_for(:janko))
     @account = Account.new(@user)
   end

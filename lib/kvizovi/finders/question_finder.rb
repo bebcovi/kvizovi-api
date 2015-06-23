@@ -3,6 +3,8 @@ require "kvizovi/finders/base_finder"
 module Kvizovi
   module Finders
     class QuestionFinder < BaseFinder
+      model Models::Question
+
       def all
         dataset.order(:position)
       end

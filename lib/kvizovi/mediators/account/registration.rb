@@ -11,7 +11,7 @@ module Kvizovi
         attr_reader :user
 
         VALID_FIELDS = [
-          :nickname, :email, :password,
+          :name, :email, :password,
           :avatar, :remove_avatar, :remote_avatar_url,
         ]
 

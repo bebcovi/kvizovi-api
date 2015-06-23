@@ -5,6 +5,7 @@ Questions = Kvizovi::Mediators::Questions
 
 class QuestionsTest < UnitTest
   def setup
+    super
     @quiz = create(:quiz)
     @questions = Questions.new(@quiz)
   end

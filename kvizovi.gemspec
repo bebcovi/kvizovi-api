@@ -4,8 +4,8 @@ Gem::Specification.new do |gem|
 
   gem.required_ruby_version = ">= 2.2.0"
 
-  gem.description   = "API for Kvizovi"
-  gem.summary       = "The API endpoint used internally by http://kvizovi.org"
+  gem.summary       = "API for Kvizovi"
+  gem.description   = "The API endpoint used internally by http://kvizovi.org"
   gem.homepage      = "https://github.com/twin/kvizovi"
 
   gem.authors       = ["Janko Marohnić"]

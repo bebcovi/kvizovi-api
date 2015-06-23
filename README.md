@@ -83,7 +83,7 @@ HEAD /heartbeat
 | Attribute    | Type    |
 | ---------    | ----    |
 | `id`         | integer |
-| `nickname`   | string  |
+| `name`       | string  |
 | `email`      | string  |
 | `token`      | string  |
 | `avatar`     | image   |
@@ -123,7 +123,7 @@ Content-Type: application/json
   "data": {
     "type": "users",
     "attributes": {
-      "nickname": "Junky",
+      "name": "Junky",
       "email": "janko.marohnic@gmail.com",
       "password": "secret"
     }
