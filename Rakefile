@@ -8,48 +8,40 @@ end
 task :default => :test
 
 namespace :db do
+  task :setup do
+    ENV["RACK_ENV"] ||= "test"
+    require "kvizovi/configuration/sequel"
+  end
+
   desc "Migrate the database (you can specify the version with `db:migrate[N]`)"
-  task :migrate, [:version] do |task, args|
+  task :migrate, [:version] => [:setup] do |task, args|
     version = args[:version] ? Integer(args[:version]) : nil
     migrate(version)
     dump_schema
   end
 
   desc "Undo all migrations"
-  task :demigrate do
+  task :demigrate => [:setup] do
     migrate(0)
     dump_schema
   end
 
   desc "Undo all migrations and migrate again"
-  task :remigrate do
+  task :remigrate => [:setup] do
     migrate(0)
     migrate
     dump_schema
   end
 
-  desc "Print out the current database schema"
-  task :schema do
-    sequel "--dump-migration-same-db"
-  end
-
   def migrate(version = nil)
-    args  = []
-    args += %W[--migrate-directory db/migrations]
-    args += %W[--migrate-version #{version}] if version
-
-    sequel *args, env: "test"
-    sequel *args, env: "development"
+    Sequel.extension :migration
+    Sequel::Migrator.apply(DB, "db/migrations", version)
   end
 
   def dump_schema
-    sequel "--dump-migration-same-db", output: "db/schema.rb"
-  end
-
-  def sequel(*args, env: (ENV["RACK_ENV"] || "test"), output: nil)
-    command = ["sequel", *args, "--env", env, "config/database.yml"]
-    command << "> #{output}" if output
-    sh command.join(" ")
+    system "pg_dump #{DB.opts[:database]} > db/schema.sql"
+    DB.extension :schema_dumper
+    File.write("db/schema.rb", DB.dump_schema_migration(same_db: true))
   end
 end
 
