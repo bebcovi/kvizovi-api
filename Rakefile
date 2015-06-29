@@ -10,30 +10,46 @@ task :default => :test
 namespace :db do
   desc "Migrate the database (you can specify the version with `db:migrate[N]`)"
   task :migrate, [:version] do |task, args|
-    sequel migrate: (args[:version] || true)
+    version = args[:version] ? Integer(args[:version]) : nil
+    migrate(version)
+    dump_schema
   end
 
   desc "Undo all migrations"
   task :demigrate do
-    sequel migrate: 0
+    migrate(0)
+    dump_schema
   end
 
   desc "Undo all migrations and migrate again"
-  task :remigrate => [:demigrate, :migrate]
+  task :remigrate do
+    migrate(0)
+    migrate
+    dump_schema
+  end
 
   desc "Print out the current database schema"
   task :schema do
     sequel "--dump-migration-same-db"
   end
 
-  def sequel(*args, migrate: nil)
-    if migrate
-      args += %W[--migrate-directory db/migrations]
-      args += %W[--migrate-version #{migrate}] if String === migrate
-    end
+  def migrate(version = nil)
+    args  = []
+    args += %W[--migrate-directory db/migrations]
+    args += %W[--migrate-version #{version}] if version
 
-    sh ["sequel", *args, "--env test", "config/database.yml"].join(" ")
-    sh ["sequel", *args, "--env development", "config/database.yml"].join(" ")
+    sequel *args, env: "test"
+    sequel *args, env: "development"
+  end
+
+  def dump_schema
+    sequel "--dump-migration-same-db", output: "db/schema.rb"
+  end
+
+  def sequel(*args, env: (ENV["RACK_ENV"] || "test"), output: nil)
+    command = ["sequel", *args, "--env", env, "config/database.yml"]
+    command << "> #{output}" if output
+    sh command.join(" ")
   end
 end
 
