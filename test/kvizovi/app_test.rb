@@ -189,6 +189,7 @@ class AppTest < Minitest::Test
 
   def test_errors
     post "/account", data: json_attributes_for(:janko)
+    authorization = token_auth(resource("user")["token"])
 
     patch "/account"
     assert_equal 401, status
@@ -205,5 +206,14 @@ class AppTest < Minitest::Test
     get "/gameplays"
     assert_equal 400, status
     assert_equal "param_missing", error["id"]
+
+    post "/quizzes", {data: {type: "quizzes", attributes: {foo: "bar"}}}, authorization
+    assert_equal 400, status
+    assert_equal "invalid_attribute", error["id"]
+
+    post "/quizzes", {data: {type: "quizzes", attributes: {}}}, authorization
+    assert_equal 400, status
+    assert_equal "validation_failed", error["id"]
+    assert_nonempty Hash, error.fetch("meta")["errors"]
   end
 end

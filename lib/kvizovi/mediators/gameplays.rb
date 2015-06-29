@@ -1,11 +1,18 @@
 require "kvizovi/finders/gameplay_finder"
 require "kvizovi/mediators/gameplays/create"
+require "kvizovi/mediators/gameplays/validate"
 
 module Kvizovi
   module Mediators
     class Gameplays
+      PERMITTED_FIELDS = [:quiz_snapshot, :answers, :started_at, :finished_at]
+
       def self.create(attrs)
         Create.call(attrs)
+      end
+
+      def self.validate(gameplay)
+        Validate.call(gameplay)
       end
 
       def initialize(user)

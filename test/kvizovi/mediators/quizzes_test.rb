@@ -27,8 +27,8 @@ class QuizzesTest < Minitest::Test
   end
 
   def test_search_pagination
-    quiz1 = @quizzes.create(attributes_for(:quiz))
-    quiz2 = @quizzes.create(attributes_for(:quiz))
+    quiz1 = @quizzes.create(attributes_for(:quiz, name: "Foo"))
+    quiz2 = @quizzes.create(attributes_for(:quiz, name: "Bar"))
 
     assert_equal [quiz1], Quizzes.search(page: {number: 1, size: 1}).to_a
     assert_equal [quiz2], Quizzes.search(page: {number: 2, size: 1}).to_a
@@ -69,7 +69,7 @@ class QuizzesTest < Minitest::Test
   def test_updating_quiz
     quiz = @quizzes.create(attributes_for(:quiz))
 
-    quiz = @quizzes.update(quiz.id, {name: "New name"})
+    quiz = @quizzes.update(quiz.id, attributes_for(:quiz, name: "New name"))
 
     assert_equal "New name", quiz.name
     refute quiz.modified?
@@ -125,5 +125,30 @@ class QuizzesTest < Minitest::Test
       @quizzes.destroy(quiz.id)
       assert_empty Kvizovi::ElasticsearchIndex[:quiz].search("*")
     end
+  end
+
+  def test_validation
+    Quizzes.validate(build(:quiz))
+
+    invalid { Quizzes.validate(build(:quiz, name: nil)) }
+    invalid { Quizzes.validate(build(:quiz, category: nil)) }
+
+    quiz = @quizzes.create(attributes_for(:quiz))
+    invalid { Quizzes.validate(build(:quiz, name: quiz.name, creator: quiz.creator)) }
+    Quizzes.validate(build(:quiz, name: quiz.name))
+
+    invalid { Quizzes.validate(build(:quiz, questions_attributes: [attributes_for(:question, title: nil)])) }
+  end
+
+  def test_create_and_update_call_validation
+    invalid { @quizzes.create(attributes_for(:quiz, name: nil)) }
+    quiz = @quizzes.create(attributes_for(:quiz))
+    invalid { @quizzes.update(quiz.id, name: nil) }
+  end
+
+  def test_mass_assignment
+    assert_raises(Kvizovi::Error::InvalidAttribute) { @quizzes.create(created_at: nil) }
+    quiz = @quizzes.create(attributes_for(:quiz))
+    assert_raises(Kvizovi::Error::InvalidAttribute) { @quizzes.update(quiz.id, created_at: nil) }
   end
 end

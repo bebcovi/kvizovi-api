@@ -1,4 +1,6 @@
+require "kvizovi/mediators/gameplays/validate"
 require "kvizovi/models"
+require "kvizovi/utils"
 
 module Kvizovi
   module Mediators
@@ -6,8 +8,11 @@ module Kvizovi
       class Create
         def self.call(attrs)
           ids = attrs.delete(:associations)
-          attrs.update(quiz_id: ids.fetch(:quiz), player_ids: ids.fetch(:players))
-          gameplay = Models::Gameplay.new(attrs)
+          gameplay = Models::Gameplay.new(
+            quiz_id: ids.fetch(:quiz),
+            player_ids: ids.fetch(:players),
+          )
+          Utils.mass_assign!(gameplay, attrs, PERMITTED_FIELDS)
           new(gameplay).call
         end
 
@@ -16,12 +21,17 @@ module Kvizovi
         end
 
         def call
+          validate!
           persist!
 
           @gameplay
         end
 
         private
+
+        def validate!
+          Validate.call(@gameplay)
+        end
 
         def persist!
           @gameplay.save

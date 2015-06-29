@@ -14,5 +14,9 @@ module TestHelpers
       yield
       DB.logger = Logger.new(nil)
     end
+
+    def invalid(&block)
+      assert_raises(Kvizovi::Error::ValidationFailed, &block)
+    end
   end
 end

@@ -1,4 +1,5 @@
 require "json"
+require "kvizovi/error"
 
 module Kvizovi
   module Utils
@@ -33,6 +34,18 @@ module Kvizovi
       params.fetch(name)
     rescue KeyError
       raise Kvizovi::Error::MissingParam, name
+    end
+
+    def valid!(object)
+      if object.errors.any?
+        raise Kvizovi::Error::ValidationFailed, object.errors
+      end
+    end
+
+    def mass_assign!(object, attrs, permitted_fields)
+      object.set_only(attrs, *permitted_fields)
+    rescue Sequel::MassAssignmentRestriction => error
+      raise Kvizovi::Error::InvalidAttribute, error.message
     end
   end
 end

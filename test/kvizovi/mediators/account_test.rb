@@ -13,7 +13,7 @@ class RegistrationTest < Minitest::Test
   include TestHelpers::Unit
 
   def test_mass_assignment
-    assert_raises(Sequel::MassAssignmentRestriction) do
+    assert_raises(Kvizovi::Error::InvalidAttribute) do
       Account.register!(created_at: Time.now)
     end
   end
@@ -55,6 +55,16 @@ class RegistrationTest < Minitest::Test
 
     assert_instance_of Time, user.confirmed_at
     assert_nil user.confirmation_token
+  end
+
+  def test_validation
+    invalid { Account.register!(attributes_for(:janko, name: nil)) }
+    invalid { Account.register!(attributes_for(:janko, email: nil)) }
+    invalid { Account.register!(attributes_for(:janko, password: nil)) }
+
+    user = Account.register!(attributes_for(:janko))
+    invalid { Account.register!(attributes_for(:matija, name: user.name)) }
+    invalid { Account.register!(attributes_for(:matija, email: user.email)) }
   end
 end
 
@@ -148,7 +158,7 @@ class PasswordSetTest < Minitest::Test
   end
 
   def test_mass_assignment
-    assert_raises(Sequel::MassAssignmentRestriction) do
+    assert_raises(Kvizovi::Error::InvalidAttribute) do
       Account.set_password!(@user.password_reset_token, created_at: nil)
     end
   end
@@ -180,15 +190,8 @@ class AccountUpdateTest < Minitest::Test
   end
 
   def test_mass_assignment
-    assert_raises(Sequel::MassAssignmentRestriction) do
-      @account.update!(created_at: nil)
-    end
-  end
-
-  def test_password_update_without_old_password
-    assert_raises(ArgumentError) do
-      @account.update!(password: "new secret")
-    end
+    @account.update!(attributes_for(:janko, password: nil))
+    assert_raises(Kvizovi::Error::InvalidAttribute) { @account.update!(created_at: nil) }
   end
 
   def test_password_update
@@ -212,6 +215,17 @@ class AccountUpdateTest < Minitest::Test
       assert_equal "Changed name", results.fetch(0)["creator"]["name"]
     end
   end
+
+  def test_validation
+    invalid { @account.update!(attributes_for(:janko, name: nil)) }
+    invalid { @account.update!(attributes_for(:janko, email: nil)) }
+
+    user = Account.register!(attributes_for(:matija))
+    invalid { @account.update!(name: user.name) }
+    invalid { @account.update!(email: user.email) }
+
+    invalid { @account.update!(password: "new secret") }
+  end
 end
 
 class AccountDestructionTest < Minitest::Test
@@ -230,7 +244,7 @@ class AccountDestructionTest < Minitest::Test
   end
 
   def test_quizzes_destruction
-    quiz = @user.add_quiz({})
+    quiz = create(:quiz, creator: @user)
 
     @account.destroy!
 
@@ -238,7 +252,7 @@ class AccountDestructionTest < Minitest::Test
   end
 
   def test_gameplays_destruction
-    gameplay = @user.add_gameplay({})
+    gameplay = create(:gameplay, player_ids: [@user.id])
 
     @account.destroy!
 

@@ -1,4 +1,6 @@
+require "kvizovi/mediators/quizzes/validate"
 require "kvizovi/elasticsearch"
+require "kvizovi/utils"
 
 module Kvizovi
   module Mediators
@@ -14,6 +16,7 @@ module Kvizovi
 
         def call(attrs)
           assign!(attrs)
+          validate!
           persist!
           elastic!
 
@@ -23,7 +26,11 @@ module Kvizovi
         private
 
         def assign!(attrs)
-          @quiz.set(attrs)
+          Utils.mass_assign!(@quiz, attrs, PERMITTED_FIELDS)
+        end
+
+        def validate!
+          Validate.call(@quiz)
         end
 
         def persist!

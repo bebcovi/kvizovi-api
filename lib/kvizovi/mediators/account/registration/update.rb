@@ -1,5 +1,6 @@
 require "kvizovi/mediators/account/password"
 require "kvizovi/elasticsearch"
+require "kvizovi/utils"
 
 module Kvizovi
   module Mediators
@@ -20,8 +21,9 @@ module Kvizovi
           end
 
           def call(attrs)
-            check_old_password!(attrs)
+            old_password = attrs.delete(:old_password)
             assign!(attrs)
+            validate!(old_password)
             encrypt_password!
             persist!
             elastic!
@@ -31,11 +33,14 @@ module Kvizovi
 
           private
 
-          def check_old_password!(attrs)
-            old_password = attrs.delete(:old_password)
-            if attrs[:password] && !password_matches?(old_password)
-              raise ArgumentError, "password doesn't match current"
+          def validate!(old_password)
+            @user.validates_presence [:name, :email]
+            @user.validates_unique :name, :email
+            if @user.password && !password_matches?(old_password)
+              @user.errors.add(:old_password, "password doesn't match current")
             end
+
+            Utils.valid!(@user)
           end
 
           def encrypt_password!
@@ -47,7 +52,7 @@ module Kvizovi
           end
 
           def assign!(attrs)
-            @user.set_only(attrs, *PERMITTED_FIELDS)
+            Utils.mass_assign!(@user, attrs, PERMITTED_FIELDS)
           end
 
           def persist!

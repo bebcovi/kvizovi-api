@@ -1,5 +1,6 @@
 require "kvizovi/mediators/account/password"
 require "kvizovi/mailer"
+require "kvizovi/utils"
 
 require "securerandom"
 
@@ -15,7 +16,7 @@ module Kvizovi
 
           def self.call(user_class, attrs)
             user = user_class.new
-            user.set_only(attrs, *PERMITTED_FIELDS)
+            Utils.mass_assign!(user, attrs, PERMITTED_FIELDS)
             new(user).call
           end
 
@@ -24,6 +25,7 @@ module Kvizovi
           end
 
           def call
+            validate!
             encrypt_password!
             assign_confirmation_token!
             assign_auth_token!
@@ -34,6 +36,13 @@ module Kvizovi
           end
 
           private
+
+          def validate!
+            @user.validates_presence [:name, :email, :password]
+            @user.validates_unique :name, :email
+
+            Utils.valid!(@user)
+          end
 
           def encrypt_password!
             Password.new(@user).encrypt!

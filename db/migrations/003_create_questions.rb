@@ -4,16 +4,15 @@ Sequel.migration do
   up do
     create_table :questions do
       primary_key :id
+      foreign_key :quiz_id, :quizzes
 
-      column :quiz_id, :integer
-
-      column :type,     :varchar
-      column :title,    :varchar
-      column :content,  :jsonb
+      column :type,     :varchar, null: false
+      column :title,    :varchar, null: false
+      column :content,  :jsonb,   null: false
       column :image_id, :varchar
       column :hint,     :varchar
 
-      column :position, :integer
+      column :position, :integer, null: false
 
       column :created_at, :timestamp
       column :updated_at, :timestamp

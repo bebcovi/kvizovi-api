@@ -1,12 +1,15 @@
+require "kvizovi/mediators/quizzes/validate"
 require "kvizovi/models"
 require "kvizovi/elasticsearch"
+require "kvizovi/utils"
 
 module Kvizovi
   module Mediators
     class Quizzes
       class Create
-        def self.call(attrs)
-          quiz = Models::Quiz.new(attrs)
+        def self.call(creator:, **attrs)
+          quiz = Models::Quiz.new(creator: creator)
+          Utils.mass_assign!(quiz, attrs, PERMITTED_FIELDS)
           new(quiz).call
         end
 
@@ -15,6 +18,7 @@ module Kvizovi
         end
 
         def call
+          validate!
           persist!
           elastic!
 
@@ -22,6 +26,10 @@ module Kvizovi
         end
 
         private
+
+        def validate!
+          Validate.call(@quiz)
+        end
 
         def persist!
           @quiz.save

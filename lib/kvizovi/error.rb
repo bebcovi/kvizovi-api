@@ -18,6 +18,10 @@ module Kvizovi
       400
     end
 
+    def meta
+      {}
+    end
+
     private
 
     def translations
@@ -60,6 +64,25 @@ module Kvizovi
 
       def status
         404
+      end
+    end
+
+    class ValidationFailed < Error
+      def initialize(errors)
+        @errors = errors
+        @id = "validation_failed"
+        super "Validation failed"
+      end
+
+      def meta
+        {errors: @errors}
+      end
+    end
+
+    class InvalidAttribute < Error
+      def initialize(message)
+        @id = "invalid_attribute"
+        super message
       end
     end
   end

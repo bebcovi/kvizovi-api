@@ -28,19 +28,20 @@ class GameplaysTest < Minitest::Test
 
   def test_searching_as_creator
     gameplay = create_gameplay
-    gameplay.players_dataset.delete
+    @user.remove_all_gameplays # we make the user a non-player
+    gameplay.reload
 
     assert_equal [gameplay], @gameplays.search(as: "creator").to_a
-    assert_equal [gameplay], @gameplays.search(as: "creator", quiz_id: @quiz.id).to_a
+    assert_equal [gameplay], @gameplays.search(as: "creator", quiz_id: gameplay.quiz.id).to_a
     assert_equal [],         @gameplays.search(as: "creator", quiz_id: -1).to_a
   end
 
   def test_searching_as_player
     gameplay = create_gameplay
-    gameplay.quiz.delete
+    @user.remove_all_quizzes # we make the user a non-creator
 
     assert_equal [gameplay], @gameplays.search(as: "player").to_a
-    assert_equal [gameplay], @gameplays.search(as: "player", quiz_id: @quiz.id).to_a
+    assert_equal [gameplay], @gameplays.search(as: "player", quiz_id: gameplay.quiz.id).to_a
     assert_equal [],         @gameplays.search(as: "player", quiz_id: -1).to_a
   end
 
@@ -60,5 +61,22 @@ class GameplaysTest < Minitest::Test
 
   def test_not_found
     assert_raises(Kvizovi::Error::NotFound) { @gameplays.find(-1) }
+  end
+
+  def test_validation
+    Gameplays.validate(build(:gameplay))
+
+    invalid { Gameplays.validate(build(:gameplay, quiz_snapshot: nil)) }
+    invalid { Gameplays.validate(build(:gameplay, answers: nil)) }
+    invalid { Gameplays.validate(build(:gameplay, started_at: nil)) }
+    invalid { Gameplays.validate(build(:gameplay, finished_at: nil)) }
+  end
+
+  def test_create_calls_validation
+    invalid { create_gameplay(quiz_snapshot: nil) }
+  end
+
+  def test_mass_assignment
+    assert_raises(Kvizovi::Error::InvalidAttribute) { create_gameplay(id: nil) }
   end
 end

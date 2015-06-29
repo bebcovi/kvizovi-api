@@ -1,4 +1,6 @@
 require "kvizovi/mailer"
+require "kvizovi/utils"
+
 require "bcrypt"
 require "securerandom"
 
@@ -17,7 +19,7 @@ module Kvizovi
         end
 
         def set!(attributes)
-          @user.set_only(attributes, :password)
+          Utils.mass_assign!(@user, attributes, [:password])
           encrypt!
           @user.password_reset_token = nil
           @user.save

@@ -4,6 +4,7 @@ require_relative "factory"
 require_relative "elastic"
 require_relative "email"
 require_relative "profiling"
+require_relative "assertions"
 
 module TestHelpers
   module Unit
@@ -14,7 +15,8 @@ module TestHelpers
                     TestHelpers::Factory,
                     TestHelpers::Elastic,
                     TestHelpers::Email,
-                    TestHelpers::Profiling
+                    TestHelpers::Profiling,
+                    TestHelpers::Assertions
     end
   end
 end
