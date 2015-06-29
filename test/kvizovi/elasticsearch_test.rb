@@ -8,10 +8,7 @@ ElasticsearchIndex = Kvizovi::ElasticsearchIndex
 class ElasticsearchTest < Minitest::Test
   include TestHelpers::Unit
 
-  def setup
-    super
-    ElasticsearchIndex.noop = false
-  end
+  elastic!
 
   def test_creating_index
     ElasticsearchIndex.stub(:index_name, "kvizovi_test") do

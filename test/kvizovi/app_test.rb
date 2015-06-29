@@ -6,10 +6,7 @@ require "mini_magick"
 class AppTest < Minitest::Test
   include TestHelpers::Integration
 
-  def setup
-    super
-    Kvizovi::ElasticsearchIndex.noop = false
-  end
+  elastic!
 
   def email
     attributes_for(:janko)[:email]

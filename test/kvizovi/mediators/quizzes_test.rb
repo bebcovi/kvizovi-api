@@ -13,10 +13,11 @@ class QuizzesTest < Minitest::Test
   end
 
   def test_search_by_query
-    Kvizovi::ElasticsearchIndex.noop = false
-    quiz = @quizzes.create(attributes_for(:quiz, name: "Game of Thrones"))
+    elastic do
+      quiz = @quizzes.create(attributes_for(:quiz, name: "Game of Thrones"))
 
-    assert_equal [quiz], Quizzes.search(q: "game").to_a
+      assert_equal [quiz], Quizzes.search(q: "game").to_a
+    end
   end
 
   def test_search_by_category
@@ -112,17 +113,17 @@ class QuizzesTest < Minitest::Test
   end
 
   def test_elasticsearch_indexing
-    Kvizovi::ElasticsearchIndex.noop = false
+    elastic do
+      quiz = @quizzes.create(attributes_for(:quiz))
+      results = Kvizovi::ElasticsearchIndex[:quiz].search("*")
+      assert_equal quiz.id, results.fetch(0)["id"]
 
-    quiz = @quizzes.create(attributes_for(:quiz))
-    results = Kvizovi::ElasticsearchIndex[:quiz].search("*")
-    assert_equal quiz.id, results.fetch(0)["id"]
+      @quizzes.update(quiz.id, {name: "Changed name"})
+      results = Kvizovi::ElasticsearchIndex[:quiz].search("*")
+      assert_equal "Changed name", results.fetch(0)["name"]
 
-    @quizzes.update(quiz.id, {name: "Changed name"})
-    results = Kvizovi::ElasticsearchIndex[:quiz].search("*")
-    assert_equal "Changed name", results.fetch(0)["name"]
-
-    @quizzes.destroy(quiz.id)
-    assert_empty Kvizovi::ElasticsearchIndex[:quiz].search("*")
+      @quizzes.destroy(quiz.id)
+      assert_empty Kvizovi::ElasticsearchIndex[:quiz].search("*")
+    end
   end
 end

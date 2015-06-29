@@ -205,12 +205,12 @@ class AccountUpdateTest < Minitest::Test
   end
 
   def test_elasticsearch_indexing
-    Kvizovi::ElasticsearchIndex.noop = false
-
-    Kvizovi::Mediators::Quizzes.new(@user).create(attributes_for(:quiz))
-    @account.update!(name: "Changed name")
-    results = Kvizovi::ElasticsearchIndex[:quiz].search("*")
-    assert_equal "Changed name", results.fetch(0)["creator"]["name"]
+    elastic do
+      Kvizovi::Mediators::Quizzes.new(@user).create(attributes_for(:quiz))
+      @account.update!(name: "Changed name")
+      results = Kvizovi::ElasticsearchIndex[:quiz].search("*")
+      assert_equal "Changed name", results.fetch(0)["creator"]["name"]
+    end
   end
 end
 

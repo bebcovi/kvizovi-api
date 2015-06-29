@@ -49,18 +49,18 @@ class QuestionsTest < Minitest::Test
   end
 
   def test_elasticsearch_indexing
-    Kvizovi::ElasticsearchIndex.noop = false
+    elastic do
+      question = @questions.create(attributes_for(:question))
+      results = Kvizovi::ElasticsearchIndex[:quiz].search("*")
+      refute_empty results.fetch(0)["questions"]
 
-    question = @questions.create(attributes_for(:question))
-    results = Kvizovi::ElasticsearchIndex[:quiz].search("*")
-    refute_empty results.fetch(0)["questions"]
+      @questions.update(question.id, {title: "Changed title"})
+      results = Kvizovi::ElasticsearchIndex[:quiz].search("*")
+      assert_equal "Changed title", results.fetch(0)["questions"][0]["title"]
 
-    @questions.update(question.id, {title: "Changed title"})
-    results = Kvizovi::ElasticsearchIndex[:quiz].search("*")
-    assert_equal "Changed title", results.fetch(0)["questions"][0]["title"]
-
-    @questions.destroy(question.id)
-    results = Kvizovi::ElasticsearchIndex[:quiz].search("*")
-    assert_empty results.fetch(0)["questions"]
+      @questions.destroy(question.id)
+      results = Kvizovi::ElasticsearchIndex[:quiz].search("*")
+      assert_empty results.fetch(0)["questions"]
+    end
   end
 end

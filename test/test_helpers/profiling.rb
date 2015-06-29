@@ -6,6 +6,7 @@ module TestHelpers
       puts "#{name} (#{Time.now - time})"
       result
     end
+    alias bench benchmark
 
     def profile(&block)
       require "ruby-prof"
