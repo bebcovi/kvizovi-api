@@ -110,4 +110,19 @@ class QuizzesTest < Minitest::Test
 
     assert_raises(Kvizovi::Error::NotFound) { @quizzes.destroy(quiz.id) }
   end
+
+  def test_elasticsearch_indexing
+    Kvizovi::ElasticsearchIndex.noop = false
+
+    quiz = @quizzes.create(attributes_for(:quiz))
+    results = Kvizovi::ElasticsearchIndex[:quiz].search("*")
+    assert_equal quiz.id, results.fetch(0)["id"]
+
+    @quizzes.update(quiz.id, {name: "Changed name"})
+    results = Kvizovi::ElasticsearchIndex[:quiz].search("*")
+    assert_equal "Changed name", results.fetch(0)["name"]
+
+    @quizzes.destroy(quiz.id)
+    assert_empty Kvizovi::ElasticsearchIndex[:quiz].search("*")
+  end
 end

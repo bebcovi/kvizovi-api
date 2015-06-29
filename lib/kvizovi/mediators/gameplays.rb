@@ -1,12 +1,11 @@
 require "kvizovi/finders/gameplay_finder"
+require "kvizovi/mediators/gameplays/create"
 
 module Kvizovi
   module Mediators
     class Gameplays
-      def self.create(attributes)
-        ids = attributes.delete(:associations)
-        attributes.update(quiz_id: ids.fetch(:quiz), player_ids: ids.fetch(:players))
-        Models::Gameplay.create attributes
+      def self.create(attrs)
+        Create.call(attrs)
       end
 
       def initialize(user)
@@ -19,6 +18,10 @@ module Kvizovi
 
       def find(id)
         Finders::GameplayFinder.find(id)
+      end
+
+      def destroy_all
+        @user.gameplays_dataset.delete
       end
     end
   end

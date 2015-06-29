@@ -1,5 +1,6 @@
 require "unit"
 require "kvizovi/mediators/account"
+require "kvizovi/mediators/quizzes"
 require "timecop"
 require "as-duration"
 
@@ -201,6 +202,15 @@ class AccountUpdateTest < Minitest::Test
 
     refute_empty @user.encrypted_password
     refute_equal old_password, @user.encrypted_password
+  end
+
+  def test_elasticsearch_indexing
+    Kvizovi::ElasticsearchIndex.noop = false
+
+    Kvizovi::Mediators::Quizzes.new(@user).create(attributes_for(:quiz))
+    @account.update!(name: "Changed name")
+    results = Kvizovi::ElasticsearchIndex[:quiz].search("*")
+    assert_equal "Changed name", results.fetch(0)["creator"]["name"]
   end
 end
 

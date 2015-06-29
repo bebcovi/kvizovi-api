@@ -1,4 +1,7 @@
 require "kvizovi/finders/question_finder"
+require "kvizovi/mediators/questions/create"
+require "kvizovi/mediators/questions/update"
+require "kvizovi/mediators/questions/destroy"
 
 module Kvizovi
   module Mediators
@@ -16,15 +19,19 @@ module Kvizovi
       end
 
       def create(attrs)
-        @quiz.add_question(attrs)
+        Create.call(**attrs, quiz: @quiz)
       end
 
       def update(id, attrs)
-        find(id).update(attrs)
+        Update.call(find(id), attrs)
       end
 
       def destroy(id)
-        find(id).destroy
+        Destroy.call(find(id))
+      end
+
+      def destroy_all
+        @quiz.questions_dataset.delete
       end
     end
   end

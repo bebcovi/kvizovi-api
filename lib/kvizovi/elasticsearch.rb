@@ -134,7 +134,7 @@ module Kvizovi
           id:        quiz.id,
           name:      quiz.name,
           questions: serialize_questions(quiz.questions),
-          creator:   serialize_creator(quiz.creator),
+          creator:   (serialize_creator(quiz.creator) if quiz.creator),
         }
       end
 

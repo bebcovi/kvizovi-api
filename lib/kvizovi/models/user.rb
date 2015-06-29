@@ -1,6 +1,5 @@
 require "kvizovi/models/base"
 require "kvizovi/configuration/refile"
-require "kvizovi/elasticsearch"
 
 module Kvizovi
   module Models
@@ -12,17 +11,6 @@ module Kvizovi
       attachment :avatar
 
       attr_accessor :password
-
-      def before_destroy
-        quizzes_dataset.destroy
-        gameplays_dataset.destroy
-        super
-      end
-
-      def after_save
-        super
-        ElasticsearchIndex[:quiz].index(quizzes)
-      end
     end
   end
 end
