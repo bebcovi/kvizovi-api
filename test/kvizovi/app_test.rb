@@ -66,6 +66,22 @@ class AppTest < Minitest::Test
     assert_equal "credentials_invalid", error["id"]
   end
 
+  def test_account_info
+    post "/account", data: json_attributes_for(:janko)
+    authorization = token_auth(resource("user")["token"])
+    creator_id = resource("user")["id"]
+    post "/account", data: json_attributes_for(:matija).merge(
+      links: {creator: {linkage: {type: "users", id: creator_id}}})
+    player_id = resource("user")["id"]
+
+    get "/account/players", {}, authorization
+    assert_equal player_id, resource("user")["id"]
+    authorization = token_auth(resource("user")["token"])
+
+    get "/account", {include: "creator"}, authorization
+    assert_equal creator_id, associated_resource("user", "creator")["id"]
+  end
+
   def test_managing_quizzes
     post "/account", data: json_attributes_for(:janko)
     authorization = token_auth(resource("user")["token"])

@@ -52,6 +52,7 @@ module Kvizovi
           end
 
           def assign!(attrs)
+            @user.creator_id = (attrs.delete(:associations) || {})[:creator]
             Utils.mass_assign!(@user, attrs, PERMITTED_FIELDS)
           end
 

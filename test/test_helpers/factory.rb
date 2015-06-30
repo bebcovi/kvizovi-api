@@ -29,6 +29,11 @@ module TestHelpers
         email: "matija.marohnic@gmail.com",
         password: "secret",
       }],
+      dori: [:User, {
+        name: "Dorota",
+        email: "dorota.tomaszova@gmail.com",
+        password: "secret",
+      }],
       quiz: [:Quiz, {
         name: "Game of Thrones",
         category: "movies",

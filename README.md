@@ -94,6 +94,7 @@ Users can have the following associations included:
 
 * `quizzes`
 * `gameplays`
+* `creator`
 
 ### Retrieving users
 
@@ -126,6 +127,11 @@ Content-Type: application/json
       "name": "Junky",
       "email": "janko.marohnic@gmail.com",
       "password": "secret"
+    },
+    "links": {
+      "creator": {
+        "linkage": {"type": "users", "id": "32"}
+      }
     }
   }
 }
@@ -138,6 +144,15 @@ the appropriate request has to be made to the API:
 
 ```http
 PATCH /account/confirm?token=abc123
+```
+
+#### Retreiving players
+
+You can retrieve all players of a user:
+
+```http
+GET "/account/players"
+Authorization: Token token="abc123"
 ```
 
 ### Updating users
@@ -503,8 +518,9 @@ Authorization: Token token="fg0d9sl"
 
 ### Retrieving gameplays
 
-You can retrieve gameplays as a creator (returns all gameplays of quizzes that
-the user created) or as a player (returns gameplays that user played).
+You can retrieve gameplays as a creator (returns gameplays of quizzes that
+the user created, but only ones which were played by their "students") or as a
+player (returns gameplays that the user played).
 
 ```http
 GET /gameplays?as=player&quiz_id=44

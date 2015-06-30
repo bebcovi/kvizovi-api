@@ -2,6 +2,7 @@ Sequel.migration do
   change do
     create_table :users do
       primary_key :id
+      foreign_key :creator_id, :users
 
       column :name,               :varchar, null: false, unique: true
       column :email,              :varchar, null: false, unique: true

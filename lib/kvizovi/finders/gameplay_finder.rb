@@ -19,7 +19,7 @@ module Kvizovi
       private
 
       def all_for_creator(user)
-        dataset.where(quiz: user.quizzes_dataset)
+        dataset.where(quiz: user.quizzes_dataset, players: user.players_dataset)
       end
 
       def all_for_player(user)

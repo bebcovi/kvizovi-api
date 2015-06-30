@@ -10,12 +10,13 @@ module Kvizovi
       class Registration
         class Create
           PERMITTED_FIELDS = [
-            :name, :email, :password,
+            :name, :email, :password, :creator_id,
             :avatar, :remove_avatar, :remote_avatar_url,
           ]
 
           def self.call(user_class, attrs)
             user = user_class.new
+            user.creator_id = (attrs.delete(:associations) || {})[:creator]
             Utils.mass_assign!(user, attrs, PERMITTED_FIELDS)
             new(user).call
           end

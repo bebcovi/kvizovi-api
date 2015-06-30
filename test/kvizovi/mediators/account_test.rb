@@ -38,9 +38,10 @@ class RegistrationTest < Minitest::Test
   end
 
   def test_persisting
-    user = Account.register!(attributes_for(:janko))
+    user = Account.register!(attributes_for(:janko, associations: {creator: create(:matija).id}))
 
     refute user.new?
+    assert_kind_of Integer, user.creator_id
   end
 
   def test_confirmation_email
@@ -226,6 +227,12 @@ class AccountUpdateTest < Minitest::Test
 
     invalid { @account.update!(password: "new secret") }
   end
+
+  def test_creator_assignment
+    @account.update!(associations: {creator: create(:matija).id})
+
+    assert_kind_of Integer, @user.creator_id
+  end
 end
 
 class AccountDestructionTest < Minitest::Test
@@ -257,5 +264,21 @@ class AccountDestructionTest < Minitest::Test
     @account.destroy!
 
     refute gameplay.exists?
+  end
+end
+
+class AccountInfoTest < Minitest::Test
+  include TestHelpers::Unit
+
+  def setup
+    super
+    @user = Account.register!(attributes_for(:janko))
+    @account = Account.new(@user)
+  end
+
+  def test_players
+    matija = create(:matija, creator: @user)
+
+    assert_equal [matija], @account.players.to_a
   end
 end

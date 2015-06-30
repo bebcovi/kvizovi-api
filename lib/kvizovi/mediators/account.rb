@@ -58,6 +58,10 @@ module Kvizovi
         registration.destroy!
       end
 
+      def players
+        @user.players_dataset
+      end
+
       private
 
       def registration

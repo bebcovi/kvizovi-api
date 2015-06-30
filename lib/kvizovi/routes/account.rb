@@ -32,6 +32,10 @@ module Kvizovi
       r.patch "password" do
         Mediators::Account.set_password!(required(:token), resource(:user))
       end
+
+      r.get "players" do
+        Mediators::Account.new(current_user).players
+      end
     end
   end
 end

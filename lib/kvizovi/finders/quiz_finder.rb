@@ -14,17 +14,19 @@ module Kvizovi
         quizzes
       end
 
-      def from_query(query)
-        quiz_documents = ElasticsearchIndex[:quiz].search(query)
-        dataset.where(id: quiz_documents.map { |h| h.fetch("id") })
-      end
-
       def all
         dataset.reverse(:created_at)
       end
 
       def find(id)
         find_by_id(id)
+      end
+
+      protected
+
+      def from_query(query)
+        quiz_documents = ElasticsearchIndex[:quiz].search(query)
+        dataset.where(id: quiz_documents.map { |h| h.fetch("id") })
       end
 
       def with_category(category)
