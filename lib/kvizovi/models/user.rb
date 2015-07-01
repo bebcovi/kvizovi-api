@@ -12,7 +12,7 @@ module Kvizovi
       extend Refile::Sequel::Attachment
       attachment :avatar
 
-      attr_accessor :password
+      attr_accessor :password, :old_password
     end
   end
 end

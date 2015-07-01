@@ -230,6 +230,6 @@ class AppTest < Minitest::Test
     post "/quizzes", {data: {type: "quizzes", attributes: {}}}, authorization
     assert_equal 400, status
     assert_equal "validation_failed", error["id"]
-    assert_nonempty Hash, error.fetch("meta")["errors"]
+    assert_nonempty Array, error.fetch("meta")["errors"]
   end
 end

@@ -38,7 +38,8 @@ module Kvizovi
 
     def valid!(object)
       if object.errors.any?
-        raise Kvizovi::Error::ValidationFailed, object.errors
+        errors = object.errors.flat_map { |column, messages| messages }
+        raise Kvizovi::Error::ValidationFailed, errors
       end
     end
 

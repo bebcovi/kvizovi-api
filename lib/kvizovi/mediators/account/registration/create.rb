@@ -1,3 +1,4 @@
+require "kvizovi/mediators/account/registration/validate"
 require "kvizovi/mediators/account/password"
 require "kvizovi/mailer"
 require "kvizovi/utils"
@@ -39,10 +40,7 @@ module Kvizovi
           private
 
           def validate!
-            @user.validates_presence [:name, :email, :password]
-            @user.validates_unique :name, :email
-
-            Utils.valid!(@user)
+            Validate.call(@user)
           end
 
           def encrypt_password!

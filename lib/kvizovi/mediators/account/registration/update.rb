@@ -1,3 +1,4 @@
+require "kvizovi/mediators/account/registration/validate"
 require "kvizovi/mediators/account/password"
 require "kvizovi/elasticsearch"
 require "kvizovi/utils"
@@ -8,7 +9,7 @@ module Kvizovi
       class Registration
         class Update
           PERMITTED_FIELDS = [
-            :name, :email, :password,
+            :name, :email, :password, :old_password,
             :avatar, :remove_avatar, :remote_avatar_url,
           ]
 
@@ -21,9 +22,8 @@ module Kvizovi
           end
 
           def call(attrs)
-            old_password = attrs.delete(:old_password)
             assign!(attrs)
-            validate!(old_password)
+            validate!
             encrypt_password!
             persist!
             elastic!
@@ -33,22 +33,12 @@ module Kvizovi
 
           private
 
-          def validate!(old_password)
-            @user.validates_presence [:name, :email]
-            @user.validates_unique :name, :email
-            if @user.password && !password_matches?(old_password)
-              @user.errors.add(:old_password, "password doesn't match current")
-            end
-
-            Utils.valid!(@user)
+          def validate!
+            Validate.call(@user)
           end
 
           def encrypt_password!
             Password.new(@user).encrypt! if @user.password
-          end
-
-          def password_matches?(password)
-            Password.new(@user).matches?(password)
           end
 
           def assign!(attrs)
