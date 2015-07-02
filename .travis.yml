@@ -11,6 +11,10 @@ env:
   global:
     - "USER=postgres"
 
+services:
+  - elasticsearch
+
 before_script:
   - "psql -c 'create database kvizovi_test;' -U postgres"
   - "bundle exec rake db:migrate"
+  - "curl localhost:9200"
