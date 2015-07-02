@@ -1,89 +1,93 @@
+require "json"
 require "inflection"
+require "delegate"
 
 module TestHelpers
   module JsonApi
-    def data
-      body.fetch("data")
-    end
-
-    def included
-      body.fetch("included")
-    end
-
-    def links
-      body.fetch("links")
-    end
-
-    def resource(name)
-      resources(plural(name)).fetch(0)
-    rescue IndexError
-      raise "no resource \"#{name}\" in #{body.inspect}"
-    end
-
-    def resources(name)
-      Array(data)
-        .select { |hash| hash["type"] == name }
-        .map    { |hash| hash.update(hash.delete("attributes")) }
-    end
-
-    def associated_resources(name, linked_name)
-      associations(name, linked_name).map do |link|
-        included_resource(link["type"], link["id"])
+    class Response < DelegateClass(Rack::Response)
+      def parsed_body
+        JSON.parse(body)
       end
-    end
 
-    def associated_resource(name, linked_name)
-      associated_resources(name, linked_name).fetch(0)
-    rescue IndexError
-      raise "no included resource \"#{name}\" => \"#{linked_name}\" in #{body.inspect}"
-    end
+      def data
+        parsed_body.fetch("data")
+      end
 
-    def association(name, association_name)
-      associations(name, association_name).fetch(0)
-    rescue IndexError
-      raise "no association \"#{name}\" => \"#{association_name}\" in #{body.inspect}"
-    end
+      def included
+        parsed_body.fetch("included")
+      end
 
-    def associations(name, association_name)
-      Array resource_links(name).fetch(association_name).fetch("linkage")
-    end
+      def errors
+        parsed_body.fetch("errors")
+      end
 
-    def included_resource(type, id)
-      included_resources(type).select { |hash| hash["id"] == id }.fetch(0)
-    end
+      def error
+        errors.fetch(0)
+      rescue IndexError
+        raise "no error in #{errors.to_json}"
+      end
 
-    def included_resources(type)
-      included.select { |hash| hash["type"] == type }
-    end
+      def resource(name)
+        resources(Inflection.plural(name)).fetch(0)
+      rescue IndexError
+        raise "no resource \"#{name}\" in #{body}"
+      end
 
-    def resource_links(name)
-      resource(name).fetch("links")
-    end
+      def resources(type)
+        extract_resources(data)
+          .select { |resource| resource["type"] == type }
+      end
 
-    def error
-      errors.fetch(0)
-    end
+      private
 
-    def errors
-      body.fetch("errors")
+      def extract_resources(collection)
+        Array(collection).map do |hash|
+          item = {}
+          item.update(hash.fetch("attributes"))
+          item.update("id" => hash.fetch("id"), "type" => hash.fetch("type"))
+          (hash["relationships"] || {}).each do |association_name, association_data|
+            association_identifiers = association_data.fetch("data")
+            associated_resources =
+              case association_identifiers
+              when Hash then included_resource(association_identifiers)
+              when Array then included_resources(association_identifiers)
+              end
+            item.update(association_name => associated_resources)
+          end
+          item
+        end
+      end
+
+      def included_resources(identifiers)
+        extract_resources(included)
+          .select { |r| identifiers.include?({"type" => r["type"], "id" => r["id"]}) }
+      end
+
+      def included_resource(identifier)
+        included_resources([identifier]).fetch(0)
+      rescue IndexError
+        raise "no resource \"#{identifier}\" in #{included}"
+      end
+
+      def Array(object)
+        if Hash === object
+          [object]
+        else
+          super
+        end
+      end
     end
 
     def json_attributes_for(name, **options)
-      {type: plural(name.to_s), attributes: attributes_for(name, **options)}
+      {type: Inflection.plural(name.to_s), attributes: attributes_for(name, **options)}
     end
 
-    private
-
-    def plural(string)
-      Inflection.plural(string)
+    def responses
+      @responses.map { |resp| Response.new(resp) }
     end
 
-    def Array(object)
-      if Hash === object
-        [object]
-      else
-        super
-      end
+    def response
+      Response.new(last_response)
     end
   end
 end

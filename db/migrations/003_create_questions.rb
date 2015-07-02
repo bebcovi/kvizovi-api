@@ -6,7 +6,7 @@ Sequel.migration do
       primary_key :id
       foreign_key :quiz_id, :quizzes
 
-      column :type,     :varchar, null: false
+      column :kind,     :varchar, null: false
       column :title,    :varchar, null: false
       column :content,  :jsonb,   null: false
       column :image_id, :varchar

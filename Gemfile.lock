@@ -7,7 +7,7 @@ GIT
 
 GIT
   remote: git://github.com/plexus/yaks.git
-  revision: cc03f1f60bc01c29f536a72e02930b00b8c24648
+  revision: f5cfe07954f3ef14e2662bddd1c8b8276ed43c9c
   specs:
     yaks (0.10.0)
       abstract_type (~> 0.0.7)
@@ -91,7 +91,7 @@ GEM
     pry-byebug (3.1.0)
       byebug (~> 4.0)
       pry (~> 0.10)
-    rack (1.6.1)
+    rack (1.6.4)
     rack-accept (0.4.5)
       rack (>= 0.4)
     rack-protection (1.5.3)

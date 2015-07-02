@@ -67,7 +67,7 @@ class QuestionsTest < Minitest::Test
   def test_validation
     Questions.validate(build(:question))
 
-    invalid { Questions.validate(build(:question, type: nil)) }
+    invalid { Questions.validate(build(:question, kind: nil)) }
     invalid { Questions.validate(build(:question, title: nil)) }
     invalid { Questions.validate(build(:question, content: nil)) }
     invalid { Questions.validate(build(:question, position: nil)) }

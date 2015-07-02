@@ -19,7 +19,7 @@ module Kvizovi
         private
 
         def validate!
-          @question.validates_presence :type, message: "Tip pitanja ne smije biti prazan"
+          @question.validates_presence :kind, message: "Tip pitanja ne smije biti prazan"
           @question.validates_presence :title, message: "Naslov pitanja ne smije biti prazan"
           @question.validates_presence :content, message: "Sadržaj pitanja ne smije biti prazan"
           @question.validates_presence :position, message: "Pozicija pitanja ne smije biti prazna"

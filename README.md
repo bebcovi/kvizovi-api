@@ -314,7 +314,7 @@ This will delete the quiz and its associated questions.
 | Attribute    | Type    |
 | ---------    | ------  |
 | `id`         | integer |
-| `type`       | string  |
+| `kind`       | string  |
 | `image`      | image   |
 | `title`      | string  |
 | `content`    | json    |
@@ -354,7 +354,7 @@ Content-Type: application/json
       "type": "questions",
       "id": "9",
       "attributes": {
-        "type": "choice",
+        "kind": "choice",
         "title": "What is Ramsay Snow's family name?"
       }
     },
@@ -362,7 +362,7 @@ Content-Type: application/json
       "type": "questions",
       "id": "17",
       "attributes": {
-        "type": "boolean",
+        "kind": "boolean",
         "title": "Dranaerys locked all of her 3 dragons in the dungeon."
       }
     }
@@ -414,7 +414,7 @@ Content-Type: application/json
   "data": {
     "type": "questions",
     "attributes": {
-      "type": "choice",
+      "kind": "choice",
       "title": "Stannis won the battle at Blackwater Bay.",
     }
   }

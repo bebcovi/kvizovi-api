@@ -17,13 +17,13 @@ module Kvizovi
       data = require_param(params, :data)
       attributes = data.fetch(:attributes)
 
-      links = data.fetch(:links, {})
+      links = data.fetch(:relationships, {})
       links.inject({}) do |hash, (name, info)|
         attributes[:associations] ||= {}
-        if Hash === info[:linkage]
-          attributes[:associations].update(name => info[:linkage][:id])
+        if Hash === info[:data]
+          attributes[:associations].update(name => info[:data][:id])
         else
-          attributes[:associations].update(name => info[:linkage].map { |rel| rel[:id] })
+          attributes[:associations].update(name => info[:data].map { |rel| rel[:id] })
         end
       end
 

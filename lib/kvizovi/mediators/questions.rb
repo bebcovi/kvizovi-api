@@ -7,7 +7,7 @@ require "kvizovi/mediators/questions/validate"
 module Kvizovi
   module Mediators
     class Questions
-      PERMITTED_FIELDS = [:type, :title, :content, :image, :hint, :position]
+      PERMITTED_FIELDS = [:kind, :title, :content, :image, :hint, :position]
 
       def self.validate(question)
         Validate.call(question)

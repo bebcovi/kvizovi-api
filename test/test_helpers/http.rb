@@ -1,5 +1,4 @@
 require "rack/test"
-require "json"
 require "kvizovi"
 
 module TestHelpers
@@ -10,19 +9,11 @@ module TestHelpers
       Kvizovi.app
     end
 
-    def body
-      JSON.parse(last_response.body)
-    end
-
-    def status
-      last_response.status
-    end
-
     [:post, :put, :patch, :delete].each do |http_method|
       alias_method :"#{http_method}_original", http_method
-      define_method(http_method) do |uri, params = {}, env = {}, &block|
+      define_method(http_method) do |uri, params = {}, env = {}|
         env["CONTENT_TYPE"] = "application/json"
-        super(uri, params.to_json, env, &block)
+        super(uri, params.to_json, env) { |response| (@responses ||= []) << response}
       end
     end
 
