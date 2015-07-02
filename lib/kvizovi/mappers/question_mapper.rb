@@ -5,6 +5,8 @@ module Kvizovi
     class QuestionMapper < BaseMapper
       attributes :id, :kind, :title, :content, :image, :hint, :position,
         :created_at, :updated_at
+
+      has_one :quiz
     end
   end
 end

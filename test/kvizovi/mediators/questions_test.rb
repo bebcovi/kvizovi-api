@@ -22,7 +22,7 @@ class QuestionsTest < Minitest::Test
     question = @questions.create(attributes_for(:question))
     assert_equal question, @questions.find(question.id)
 
-    assert_raises(Kvizovi::Error::NotFound) { @questions.find(-1) }
+    assert_raises(Kvizovi::Error::ResourceNotFound) { @questions.find(-1) }
   end
 
   def test_create

@@ -123,8 +123,9 @@ class AppTest < Minitest::Test
     get "/quizzes/#{quiz_id}/questions", {}, token_auth(token)
     assert_resource response.resources("questions")[0]
 
-    get "/quizzes/#{quiz_id}/questions/#{question_id}", {}, token_auth(token)
+    get "/quizzes/#{quiz_id}/questions/#{question_id}", {include: "quiz"}, token_auth(token)
     assert_resource response.resource("question")
+    assert_resource response.resource("question")["quiz"]
 
     patch "/quizzes/#{quiz_id}/questions/#{question_id}",
       {data: {attributes: {title: "New title"}}}, token_auth(token)
@@ -205,7 +206,7 @@ class AppTest < Minitest::Test
 
     get "/quizzes/-1"
     assert_equal 404, response.status
-    assert_equal "record_not_found", response.error["id"]
+    assert_equal "resource_not_found", response.error["id"]
 
     get "/gameplays"
     assert_equal 400, response.status
@@ -219,6 +220,10 @@ class AppTest < Minitest::Test
     assert_equal 400, response.status
     assert_equal "validation_failed", response.error["id"]
     assert_nonempty Array, response.error.fetch("meta")["errors"]
+
+    get "/foo"
+    assert_equal 404, response.status
+    assert_equal "page_not_found", response.error["id"]
   end
 
   private

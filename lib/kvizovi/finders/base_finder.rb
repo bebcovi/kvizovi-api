@@ -41,8 +41,7 @@ module Kvizovi
       end
 
       def not_found!(id)
-        model_name = self.class.model.name.split("::").first
-        raise Kvizovi::Error::NotFound, "#{model_name} with id #{id} not found"
+        raise Kvizovi::Error::ResourceNotFound
       end
     end
   end

@@ -16,6 +16,7 @@ module Kvizovi
     plugin :error_handler
     plugin :multi_route
     plugin :heartbeat
+    plugin :not_found
 
     route do |r|
       r.multi_route
@@ -48,6 +49,10 @@ module Kvizovi
       else
         raise error
       end
+    end
+
+    not_found do
+      raise Kvizovi::Error::PageNotFound
     end
   end
 end

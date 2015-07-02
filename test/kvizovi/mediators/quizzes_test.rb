@@ -52,12 +52,12 @@ class QuizzesTest < Minitest::Test
     assert_equal quiz, @quizzes.find(quiz.id)
 
     quiz = create(:quiz, creator: create(:matija))
-    assert_raises(Kvizovi::Error::NotFound) { @quizzes.find(quiz.id) }
+    assert_raises(Kvizovi::Error::ResourceNotFound) { @quizzes.find(quiz.id) }
   end
 
   def test_not_found
-    assert_raises(Kvizovi::Error::NotFound) { Quizzes.find(-1) }
-    assert_raises(Kvizovi::Error::NotFound) { @quizzes.find(-1) }
+    assert_raises(Kvizovi::Error::ResourceNotFound) { Quizzes.find(-1) }
+    assert_raises(Kvizovi::Error::ResourceNotFound) { @quizzes.find(-1) }
   end
 
   def test_create
@@ -86,7 +86,7 @@ class QuizzesTest < Minitest::Test
   def test_updating_scopes_to_user
     quiz = create(:quiz, creator: create(:matija))
 
-    assert_raises(Kvizovi::Error::NotFound) { @quizzes.update(quiz.id, {}) }
+    assert_raises(Kvizovi::Error::ResourceNotFound) { @quizzes.update(quiz.id, {}) }
   end
 
   def test_destroying_quiz
@@ -109,7 +109,7 @@ class QuizzesTest < Minitest::Test
   def test_destroying_scopes_to_user
     quiz = create(:quiz, creator: create(:matija))
 
-    assert_raises(Kvizovi::Error::NotFound) { @quizzes.destroy(quiz.id) }
+    assert_raises(Kvizovi::Error::ResourceNotFound) { @quizzes.destroy(quiz.id) }
   end
 
   def test_elasticsearch_indexing

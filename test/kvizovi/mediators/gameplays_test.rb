@@ -66,7 +66,7 @@ class GameplaysTest < Minitest::Test
   end
 
   def test_not_found
-    assert_raises(Kvizovi::Error::NotFound) { @gameplays.find(-1) }
+    assert_raises(Kvizovi::Error::ResourceNotFound) { @gameplays.find(-1) }
   end
 
   def test_validation

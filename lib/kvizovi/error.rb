@@ -56,9 +56,20 @@ module Kvizovi
       end
     end
 
-    class NotFound < Error
-      def initialize(message)
-        @id = "record_not_found"
+    class ResourceNotFound < Error
+      def initialize(message = "Resource not found")
+        @id = "resource_not_found"
+        super message
+      end
+
+      def status
+        404
+      end
+    end
+
+    class PageNotFound < Error
+      def initialize(message = "Page wasn't found")
+        @id = "page_not_found"
         super message
       end
 
@@ -71,7 +82,7 @@ module Kvizovi
       def initialize(errors)
         @errors = errors
         @id = "validation_failed"
-        super "Validation failed"
+        super "Resource validation has failed"
       end
 
       def meta

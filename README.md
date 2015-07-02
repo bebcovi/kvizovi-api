@@ -23,6 +23,7 @@
 * [**Images**](#images)
   - [Direct upload](#direct-upload)
 * [**Contact**](#contact)
+* [**Errors**](#errors)
 
 ## Introduction
 
@@ -30,7 +31,7 @@ All requests should be sent and all responses are returned in the JSON format,
 according to the [JSON API specification](http://jsonapi.org).
 
 ```http
-POST /quizzes
+POST /quizzes HTTP/1.1
 Content-Type: application/json
 
 {
@@ -49,7 +50,7 @@ To make authorized requests, include user's token in the "Authorization"
 header.
 
 ```http
-GET /quizzes
+GET /quizzes HTTP/1.1
 Authorization: Token token="abc123"
 ```
 
@@ -71,53 +72,86 @@ Content-Type: application/json
 }
 ```
 
+See the [Errors](#errors) section for all errors than can occur.
+
+In general you can retrieve resource relationships by passing in the `include`
+query parameter:
+
+```http
+GET /quizzes/15?include=questions HTTP/1.1
+Content-Type: application/json
+
+{
+  "data": {
+    "type": "quizzes",
+    "id": "15",
+    "attributes": {
+      "name": "Game of Thrones",
+      "category": "movies"
+    },
+    "relationships": {
+      "questions": {
+        "data": [
+          {"type": "questions", "id": "9"},
+          {"type": "questions", "id": "17"}
+        ]
+      }
+    }
+  },
+  "included": [
+    {
+      "type": "questions",
+      "id": "9",
+      "attributes": {
+        "kind": "choice",
+        "title": "What is Ramsay Snow's family name?"
+      }
+    },
+    {
+      "type": "questions",
+      "id": "17",
+      "attributes": {
+        "kind": "boolean",
+        "title": "Dranaerys locked all of her 3 dragons in the dungeon."
+      }
+    }
+  ]
+}
+```
+
 There is also a URL available for checking the connection to the server (e.g.
 so that you can alert the user if they're offline):
 
 ```http
-HEAD /heartbeat
+HEAD /heartbeat HTTP/1.1
 ```
 
 ## Users
 
-| Attribute    | Type    |
-| ---------    | ----    |
-| `id`         | integer |
-| `name`       | string  |
-| `email`      | string  |
-| `token`      | string  |
-| `avatar`     | image   |
-| `created_at` | time    |
-| `updated_at` | time    |
+| Attribute    | Type   | Description                               |
+| ---------    | ----   | -----------                               |
+| `id`         | string | unique identifier                         |
+| `name`       | string | name that will be displayed for that user |
+| `email`      | string | email address                             |
+| `token`      | string | authorization token                       |
+| `avatar`     | image  | profile image                             |
+| `created_at` | time   | when the user has registered              |
+| `updated_at` | time   | when the user was last updated            |
 
-Users can have the following associations included:
+Users can have the following relationships included:
 
 * `quizzes`
 * `gameplays`
-* `creator`
+* `creator` (assignable)
+* `players`
 
-### Retrieving users
-
-You can retrieve users with their username and password (login), using basic
-authentication:
-
-```http
-GET /account
-Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ
-```
-
-(This raises a `credentials_invalid` error if email or password were incorrect.)
-You can also use token authentication:
-
-```http
-GET /account
-Authorization: Token token="abc123"
-```
+The "players"--"creator" relationship is a generalization of
+"students"--"teacher".
 
 ### Creating users
 
 ```http
-POST /account
+POST /account?include=creator HTTP/1.1
 Content-Type: application/json
 
 {
@@ -128,9 +162,9 @@ Content-Type: application/json
       "email": "janko.marohnic@gmail.com",
       "password": "secret"
     },
-    "links": {
+    "relationships": {
       "creator": {
-        "linkage": {"type": "users", "id": "32"}
+        "data": {"type": "users", "id": "32"}
       }
     }
   }
@@ -143,7 +177,25 @@ to their email address. The email will include a link to
 the appropriate request has to be made to the API:
 
 ```http
-PATCH /account/confirm?token=abc123
+PATCH /account/confirm?token=abc123 HTTP/1.1
+```
+
+### Retrieving users
+
+You can retrieve users with their username and password (login), using basic
+authentication:
+
+```http
+GET /account HTTP/1.1
+Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ
+```
+
+(This raises a `credentials_invalid` error if email or password were incorrect.)
+You can also use token authentication (contained in users's "token" field):
+
+```http
+GET /account HTTP/1.1
+Authorization: Token token="abc123"
 ```
 
 #### Retreiving players
@@ -151,14 +203,16 @@ PATCH /account/confirm?token=abc123
 You can retrieve all players of a user:
 
 ```http
-GET "/account/players"
+GET "/account/players" HTTP/1.1
 Authorization: Token token="abc123"
 ```
 
 ### Updating users
 
+When updating the password, the user has to provide the old password:
+
 ```http
-PATCH /account
+PATCH /account HTTP/1.1
 Authorization: Token token="abc123"
 Content-Type: application/json
 
@@ -177,7 +231,7 @@ Content-Type: application/json
 #### Password reset
 
 ```http
-POST /account/password?email=janko.marohnic@gmail.com
+POST /account/password?email=janko.marohnic@gmail.com HTTP/1.1
 ```
 
 (An `email_invalid` error will be raised if user with that email doesn't exist.)
@@ -188,7 +242,7 @@ link and enters the new password, an API request needs to be made with
 the password reset token included:
 
 ```http
-PATCH /account/password?token=abc123
+PATCH /account/password?token=abc123 HTTP/1.1
 Content-Type: application/json
 
 {
@@ -205,22 +259,22 @@ Content-Type: application/json
 ### Deleting users
 
 ```http
-DELETE /account
+DELETE /account HTTP/1.1
 Authorization: Token token="abc123"
 ```
 
 ## Quizzes
 
-| Attribute         | Type    |
-| ---------         | ----    |
-| `id`              | integer |
-| `name`            | string  |
-| `category`        | string  |
-| `image`           | image   |
-| `active`          | boolean |
-| `questions_count` | integer |
-| `created_at`      | time    |
-| `updated_at`      | time    |
+| Attribute         | Type    | Description                                      |
+| ---------         | ----    | -----------                                      |
+| `id`              | string  | unique identifier                                |
+| `name`            | string  | name that will be displayed                      |
+| `category`        | string  | e.g. "books", "movies", "history", ...           |
+| `active`          | boolean | whether the quiz is playable                     |
+| `questions_count` | integer | how many questions does this quiz currently have |
+| `image`           | image   | the image describing the quiz                    |
+| `created_at`      | time    | when the quiz was created                        |
+| `updated_at`      | time    | when the quiz was last updated                   |
 
 Quizzes can have the following associations included:
 
@@ -233,24 +287,24 @@ Quizzes can have the following associations included:
 To return quizzes from a user, include users's token:
 
 ```http
-GET /quizzes
+GET /quizzes HTTP/1.1
 Authorization: Token token="abc123"
 ```
 ```http
-GET /quizzes/23
+GET /quizzes/23 HTTP/1.1
 Authorization: Token token="abc123"
 ```
 
 To search all quizzes (e.g. for playing), just omit the authorization token:
 
 ```http
-GET /quizzes?q=matrix
+GET /quizzes?q=matrix HTTP/1.1
 ```
 ```http
-GET /quizzes?category=movies
+GET /quizzes?category=movies HTTP/1.1
 ```
 ```http
-GET /quizzes?page[number]=1&page[size]=10
+GET /quizzes?page[number]=1&page[size]=10 HTTP/1.1
 ```
 ```http
 HTTP/1.1 200 OK
@@ -267,7 +321,7 @@ Content-Type: application/json
 ### Creating quizzes
 
 ```http
-POST /quizzes
+POST /quizzes HTTP/1.1
 Authorization: Token token="abc123"
 Content-Type: application/json
 
@@ -276,7 +330,8 @@ Content-Type: application/json
     "type": "quizzes",
     "attributes": {
       "name": "Game of Thrones",
-      "category": "movies"
+      "category": "movies",
+      "active": true,
     }
   }
 }
@@ -285,7 +340,7 @@ Content-Type: application/json
 ### Updating quizzes
 
 ```http
-PATCH /quizzes/1
+PATCH /quizzes/1 HTTP/1.1
 Authorization: Token token="abc123"
 Content-Type: application/json
 
@@ -303,7 +358,7 @@ Content-Type: application/json
 ### Deleting quizzes
 
 ```http
-DELETE /quizzes/1
+DELETE /quizzes/1 HTTP/1.1
 Authorization: Token token="abc123"
 ```
 
@@ -311,22 +366,26 @@ This will delete the quiz and its associated questions.
 
 ## Questions
 
-| Attribute    | Type    |
-| ---------    | ------  |
-| `id`         | integer |
-| `kind`       | string  |
-| `image`      | image   |
-| `title`      | string  |
-| `content`    | json    |
-| `hint`       | string  |
-| `position`   | integer |
-| `created_at` | time    |
-| `updated_at` | time    |
+| Attribute    | Type    | Description                                    |
+| ---------    | ------  | -----------                                    |
+| `id`         | string  | unique identifier                              |
+| `kind`       | string  | e.g. "boolean", "choice", ...                  |
+| `title`      | string  | main statement of the question                 |
+| `content`    | json    | kind-specific content (e.g. provided answers)  |
+| `hint`       | string  | help for answering the question                |
+| `position`   | integer | ordinal number of the question inside the quiz |
+| `image`      | image   | artwork for the question                       |
+| `created_at` | time    | when the question was created                  |
+| `updated_at` | time    | when the question was last updated             |
+
+Questions can have the following relationships included:
+
+* `quiz`
 
 ### Retrieving questions
 
 ```http
-GET /quizzes/12?include=questions
+GET /quizzes/12?include=questions HTTP/1.1
 ```
 ```http
 HTTP/1.1 200 OK
@@ -340,9 +399,9 @@ Content-Type: application/json
       "name": "Game of Thrones",
       "category": "movies"
     },
-    "links": {
+    "relationships": {
       "questions": {
-        "linkage": [
+        "data": [
           {"type": "questions", "id": "9"},
           {"type": "questions", "id": "17"}
         ]
@@ -373,18 +432,18 @@ Content-Type: application/json
 You can also retrieve questions directly:
 
 ```http
-GET /quizzes/1/questions
+GET /quizzes/1/questions HTTP/1.1
 Authorization: Token token="abc123"
 ```
 ```http
-GET /quizzes/1/questions/54
+GET /quizzes/1/questions/54 HTTP/1.1
 Authorization: Token token="abc123"
 ```
 
 ### Creating questions
 
 ```http
-POST /quizzes
+POST /quizzes HTTP/1.1
 Authorization: Token token="abc123"
 Content-Type: application/json
 
@@ -395,8 +454,8 @@ Content-Type: application/json
       "name": "Game of Thrones",
       "category": "movies",
       "questions_attributes": [
-        {"type": "boolean", "title": "..."},
-        {"type": "choice", "title": "..."}
+        {"kind": "boolean", "title": "...", "content": {}, "hint": "...", "position": 1},
+        {"kind": "choice", "title": "...", "content": {}, "hint": "...", "position": 2},
       ]
     }
   }
@@ -406,7 +465,7 @@ Content-Type: application/json
 You can also create questions directly:
 
 ```http
-POST /quizzes/1/questions
+POST /quizzes/1/questions HTTP/1.1
 Authorization: Token token="abc123"
 Content-Type: application/json
 
@@ -424,7 +483,7 @@ Content-Type: application/json
 ### Updating questions
 
 ```http
-PATCH /quizzes/23
+PATCH /quizzes/23 HTTP/1.1
 Authorization: Token token="abc123"
 Content-Type: application/json
 
@@ -450,7 +509,7 @@ Content-Type: application/json
 You can also update and delete questions directly:
 
 ```http
-PATCH /quizzes/23/questions/11
+PATCH /quizzes/23/questions/11 HTTP/1.1
 Authorization: Token token="abc123"
 Content-Type: application/json
 
@@ -465,30 +524,30 @@ Content-Type: application/json
 }
 ```
 ```http
-DELETE /quizzes/23/questions/11
+DELETE /quizzes/23/questions/11 HTTP/1.1
 Authorization: Token token="abc123"
 ```
 
 ## Gameplays
 
-| Attribute       | Type      |
-| ---------       | ----      |
-| `id`            | integer   |
-| `quiz_snapshot` | json      |
-| `answers`       | json      |
-| `players_count` | integer   |
-| `started_at`    | time      |
-| `finished_at`   | time      |
+| Attribute       | Type    | Description                            |
+| ---------       | ----    | -----------                            |
+| `id`            | string  | unique identifier                      |
+| `quiz_snapshot` | json    | snapshot of the played quiz            |
+| `answers`       | json    | users' answers to the quiz             |
+| `players_count` | integer | number of players that played the quiz |
+| `started_at`    | time    | when the gameplay has started          |
+| `finished_at`   | time    | when the gameplay has finished         |
 
 Gameplays can have the following associations included:
 
-* `players`
-* `quiz`
+* `players` (assignable)
+* `quiz` (assignable)
 
 ### Saving gameplays
 
 ```http
-POST /gameplays
+POST /gameplays HTTP/1.1
 Content-Type: application/json
 Authorization: Token token="fg0d9sl"
 
@@ -498,15 +557,15 @@ Authorization: Token token="fg0d9sl"
     "attributes": {
       "quiz_snapshot": {"name": "Game of Thrones", "questions": []},
       "answers": {},
-      "start": "2015-05-03T21:17:30+02:00",
-      "finish": "2015-05-03T21:20:30+02:00",
+      "started_at": "2015-05-03T21:17:30+02:00",
+      "finished_at": "2015-05-03T21:20:30+02:00",
     },
-    "links": {
+    "relationships": {
       "quiz": {
-        "linkage": {"type": "quizzes", "id": "32"}
+        "data": {"type": "quizzes", "id": "32"}
       },
       "players": {
-        "linkage": [
+        "data": [
           {"type": "users", "id": "44"},
           {"type": "users", "id": "51"}
         ]
@@ -523,35 +582,35 @@ the user created, but only ones which were played by their "students") or as a
 player (returns gameplays that the user played).
 
 ```http
-GET /gameplays?as=player&quiz_id=44
+GET /gameplays?as=player&quiz_id=44 HTTP/1.1
 Authorization: Token token="abc123"
 ```
 
 ```http
-GET /gameplays?as=creator&quiz_id=44
+GET /gameplays?as=creator&quiz_id=44 HTTP/1.1
 Authorization: Token token="abc123"
 ```
 
 ```http
-GET /gameplays?as=creator&page[number]=1&page[size]=10
+GET /gameplays?as=creator&page[number]=1&page[size]=10 HTTP/1.1
 Authorization: Token token="abc123"
 ```
 
 You can retrieve single gameplays and include associations:
 
 ```http
-GET /gameplays/43?include=players,quiz
+GET /gameplays/43?include=players,quiz HTTP/1.1
 Authorization: Token token="abc123"
 ```
 
-## Images
+## Images (*NOT READY*)
 
 Users, quizzes and questions can all have images attached. When you send an
 attached image (e.g. as `avatar`), the response will include the image URL
 template:
 
 ```http
-PATCH /quizzes/34
+PATCH /quizzes/34 HTTP/1.1
 Authorization: Token token="abc123"
 Content-Type: application/json
 
@@ -568,6 +627,7 @@ Content-Type: application/json
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/json
+
 {
   "data": {
     "type": "quizzes",
@@ -599,7 +659,7 @@ in the background the moment user selects it.
 For direct uploading, send a file as `file` to the endpoint:
 
 ```http
-POST /attachments/cache
+POST /attachments/cache HTTP/1.1
 Content-Type: multipart/form-data
 ```
 ```http
@@ -613,7 +673,7 @@ Then, when the user submits the form, instead of the file simply send `{"id":
 "..."}` as the `avatar`.
 
 ```http
-PATCH /account
+PATCH /account HTTP/1.1
 Authorization: Token token="abc123"
 Content-Type: application/json
 
@@ -652,7 +712,7 @@ important, you have the following events automatically dispatched:
 ## Contact
 
 ```http
-POST /contact
+POST /contact HTTP/1.1
 Content-Type: application/json
 
 {
@@ -665,3 +725,29 @@ Content-Type: application/json
   }
 }
 ```
+
+## Errors
+
+User errors (the client should rescue these and display an apropriate message
+to the user):
+
+| Identifier            | Status | Description                                           |
+| ----------            | ------ | -----------                                           |
+| `credentials_invalid` | 401    | Incorrect email or password                           |
+| `email_invalid`       | 401    | No user with that email address                       |
+| `account_expired`     | 401    | Account hasn't been confirmed by email                |
+| `resource_not_found`  | 404    | Raised when a requested resource wasn't found         |
+| `validation_failed`   | 400    | Raised when the validation of the resource has failed |
+
+Other errors:
+
+| Identifier                     | Status | Description                                                                                   |
+| ----------                     | ------ | -----------                                                                                   |
+| `authorization_missing`        | 401    | No authorization credentials given                                                            |
+| `token_missing`                | 401    | No authorization token given                                                                  |
+| `token_invalid`                | 401    | No user with that token                                                                       |
+| `confirmation_token_invalid`   | 401    | Confirmation token doesn't exist                                                              |
+| `password_reset_token_invalid` | 401    | Password reset token doesn't exist                                                            |
+| `param_missing`                | 400    | Raised when a parameter is missing from the request (either a query parameter, or a JSON key) |
+| `page_not_found`               | 404    | Raised when the route wasn't recognized                                                       |
+| `invalid_attribute`            | 400    | Raised when an unkown or forbidden resource attribute was included in the request             |
