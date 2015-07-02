@@ -16,14 +16,14 @@ Gem::Specification.new do |gem|
 
 
   # App
-  gem.add_dependency "roda", "~> 2.2"
+  gem.add_dependency "roda", "~> 2.4"
   gem.add_dependency "roda-symbolized_params"
 
   # JSON
   gem.add_dependency "yaks"
 
   # Database
-  gem.add_dependency "sequel", "~> 4.22"
+  gem.add_dependency "sequel", "~> 4.24"
   gem.add_dependency "pg"
   gem.add_dependency "sequel_postgresql_triggers", "~> 1.0.8"
   gem.add_dependency "elasticsearch", "~> 1.0.12"
@@ -45,7 +45,7 @@ Gem::Specification.new do |gem|
   # Testing
   gem.add_development_dependency "rake"
   gem.add_development_dependency "minitest", "~> 5.6"
-  gem.add_development_dependency "minitest-hooks", "~> 1.0"
+  gem.add_development_dependency "minitest-hooks", "~> 1.2"
   gem.add_development_dependency "timecop"
   gem.add_development_dependency "rack-test"
 end

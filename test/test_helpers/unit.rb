@@ -1,4 +1,4 @@
-require "minitest/hooks"
+require "minitest/hooks/test"
 require_relative "database"
 require_relative "factory"
 require_relative "elastic"
