@@ -1,5 +1,15 @@
 # Kvizovi API [![travis](https://travis-ci.org/twin/kvizovi-api.svg)](https://travis-ci.org/twin/kvizovi-api)
 
+## Setup
+
+* `brew install postgres` (>= 9.4)
+* `brew install elasticsearch` (>= 1.5)
+* `brew install redis` (>= 2.8)
+* `rbenv install 2.2.2; rbenv global 2.2.2`
+* `gem install bundler; bundle install`
+* `createdb kvizovi_development; rake db:migrate`
+* `bundle exec rackup`
+
 ## Table of contents
 
 * [**Introduction**](#introduction)
