@@ -1,4 +1,5 @@
 require "simple_mailer"
+require "sidekiq"
 require "unindent"
 
 module Kvizovi
@@ -53,7 +54,7 @@ module Kvizovi
     private
 
     def send_email(from:, to:, cc: nil, subject:, body:)
-      SimpleMailer.send_email(from, to, subject, body, cc: cc)
+      SimpleMailer.delay.send_email(from, to, subject, body, cc: cc)
     end
   end
 end

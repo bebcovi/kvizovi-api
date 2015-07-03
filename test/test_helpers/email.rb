@@ -1,5 +1,13 @@
 module TestHelpers
   module Email
+    def setup
+      super
+      if defined?(Sidekiq)
+        require "sidekiq/testing"
+        Sidekiq::Testing.inline!
+      end
+    end
+
     def teardown
       super
       SimpleMailer.emails_sent.clear if defined?(SimpleMailer)

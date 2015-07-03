@@ -43,6 +43,9 @@ Gem::Specification.new do |gem|
   gem.add_dependency "unindent"
   gem.add_dependency "as-duration", "~> 0.1"
 
+  # Backgound jobs
+  gem.add_dependency "sidekiq", "~> 3.4.1"
+
   # Testing
   gem.add_development_dependency "rake"
   gem.add_development_dependency "minitest", "~> 5.6"
