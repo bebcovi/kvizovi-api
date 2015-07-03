@@ -18,6 +18,7 @@ Gem::Specification.new do |gem|
   # App
   gem.add_dependency "roda", "~> 2.4"
   gem.add_dependency "roda-symbolized_params"
+  gem.add_dependency "puma"
 
   # JSON
   gem.add_dependency "yaks"
