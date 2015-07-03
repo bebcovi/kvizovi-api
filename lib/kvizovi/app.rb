@@ -7,6 +7,8 @@ require "kvizovi/mediators/account"
 require "kvizovi/error"
 require "kvizovi/utils"
 
+require "rack/deflater"
+
 module Kvizovi
   class App < Roda
     plugin :all_verbs
@@ -17,6 +19,8 @@ module Kvizovi
     plugin :multi_route
     plugin :heartbeat
     plugin :not_found
+
+    use Rack::Deflater
 
     route do |r|
       r.multi_route

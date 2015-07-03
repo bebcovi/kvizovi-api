@@ -226,6 +226,12 @@ class AppTest < Minitest::Test
     assert_equal "page_not_found", response.error["id"]
   end
 
+  def test_response_body_compression
+    get "/foo", {}, {"HTTP_ACCEPT_ENCODING" => "gzip, deflate"}
+    assert_raises(JSON::ParserError) { response.parsed_body }
+    refute_empty response.body
+  end
+
   private
 
   def register!
