@@ -24,7 +24,19 @@ module Kvizovi
 
     def self.create!
       delete!
-      client.indices.create(index: index_name) unless noop
+      client.indices.create(index: index_name, body: {
+        settings: {
+          # analysis: {
+          #   filter: {"hr_HR": {type: "hunspell", locale: "hr_HR"}},
+          #   analyzer: {
+          #     default: {
+          #       tokenizer: "standard",
+          #       filter: ["hr_HR"],
+          #     }
+          #   }
+          # }
+        },
+      }) unless noop
     end
 
     def self.delete!

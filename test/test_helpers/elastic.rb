@@ -28,6 +28,11 @@ module TestHelpers
           Kvizovi::ElasticsearchIndex.create!
         end
 
+        define_method(:teardown) do
+          super()
+          Kvizovi::ElasticsearchIndex.clear
+        end
+
         define_method(:after_all) do
           super()
           Kvizovi::ElasticsearchIndex.delete!

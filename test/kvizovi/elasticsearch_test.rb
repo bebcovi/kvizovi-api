@@ -89,11 +89,14 @@ class ElasticsearchTest < Minitest::Test
   end
 
   def test_search_ranking
-    skip
-  end
+    quiz1 = O(id: 1, name: "World", questions: [])
+    quiz2 = O(id: 2, questions: [O(title: "World")])
+    ElasticsearchIndex[:quiz].index([quiz2, quiz1])
 
-  def test_croatian_stemming
-    skip
+    results = ElasticsearchIndex[:quiz].search("World")
+
+    assert_equal quiz1.id, results[0]["id"]
+    assert_equal quiz2.id, results[1]["id"]
   end
 
   private
@@ -103,19 +106,16 @@ class ElasticsearchTest < Minitest::Test
   end
 
   def quiz
-    @quiz ||= OpenStruct.new(
+    @quiz ||= O(
       id: 1,
       name: "Quiz",
-      questions: [
-        OpenStruct.new(
-          title: "Question",
-          content: {},
-        )
-      ],
-      creator: OpenStruct.new(
-        name: "Creator",
-      ),
+      questions: [O(title: "Question", content: {})],
+      creator: O(name: "Creator"),
     )
+  end
+
+  def O(*args)
+    OpenStruct.new(*args)
   end
 
   def indexed_quizzes
