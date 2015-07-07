@@ -41,7 +41,7 @@ module Kvizovi
       end
 
       def not_found!(id)
-        raise Kvizovi::Error::ResourceNotFound
+        raise Kvizovi::Error::ResourceNotFound, [self.class.model, id]
       end
     end
   end

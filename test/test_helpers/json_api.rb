@@ -79,7 +79,10 @@ module TestHelpers
     end
 
     def json_attributes_for(name, **options)
-      {type: Inflection.plural(name.to_s), attributes: attributes_for(name, **options)}
+      {
+        type: Inflection.plural(type_for(name)),
+        attributes: attributes_for(name, **options),
+      }
     end
 
     def responses

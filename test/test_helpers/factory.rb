@@ -1,3 +1,5 @@
+require "inflection"
+
 module TestHelpers
   module Factory
     def create(name, additional_attributes = {})
@@ -16,6 +18,11 @@ module TestHelpers
     def model_for(name)
       model_name = FACTORIES.fetch(name)[0]
       Kvizovi::Models.const_get(model_name)
+    end
+
+    def type_for(name)
+      model = model_for(name)
+      model.send(:underscore, model.send(:demodulize, model.to_s))
     end
 
     FACTORIES = {

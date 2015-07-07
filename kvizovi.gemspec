@@ -30,8 +30,9 @@ Gem::Specification.new do |gem|
   gem.add_dependency "elasticsearch", "~> 1.0.12"
 
   # Images
-  gem.add_dependency "refile", "= 0.5.3"
+  gem.add_dependency "refile", ">= 0.5.5"
   gem.add_dependency "refile-sequel"
+  gem.add_dependency "refile-mini_magick", "~> 0.1"
   gem.add_dependency "mime-types", ">= 2.5"
   gem.add_dependency "mini_magick", "~> 4.2"
 

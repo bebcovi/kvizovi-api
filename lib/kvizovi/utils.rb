@@ -1,4 +1,5 @@
 require "json"
+require "inflection"
 require "kvizovi/error"
 
 module Kvizovi
@@ -15,6 +16,7 @@ module Kvizovi
 
     def resource(params, name)
       data = require_param(params, :data)
+      raise Kvizovi::Error, "no resource of type #{name}" if data[:type] != Inflection.plural(name.to_s)
       attributes = data.fetch(:attributes)
 
       links = data.fetch(:relationships, {})

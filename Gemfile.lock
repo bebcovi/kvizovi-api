@@ -23,7 +23,8 @@ PATH
       mini_magick (~> 4.2)
       pg
       puma
-      refile (= 0.5.3)
+      refile (>= 0.5.5)
+      refile-mini_magick (~> 0.1)
       refile-sequel
       roda (~> 2.4)
       roda-symbolized_params
@@ -59,6 +60,8 @@ GEM
       adamantium (~> 0.2.0)
       equalizer (~> 0.0.9)
     connection_pool (2.2.0)
+    domain_name (0.5.24)
+      unf (>= 0.0.5, < 1.0.0)
     elasticsearch (1.0.12)
       elasticsearch-api (= 1.0.12)
       elasticsearch-transport (= 1.0.12)
@@ -71,6 +74,8 @@ GEM
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
     hitimes (1.2.2)
+    http-cookie (1.0.2)
+      domain_name (~> 0.5)
     ice_nine (0.11.1)
     inflection (1.0.0)
     json (1.8.3)
@@ -81,8 +86,9 @@ GEM
     mini_magick (4.2.7)
     minitest (5.6.1)
     minitest-hooks (1.2.0)
-    multi_json (1.11.1)
+    multi_json (1.11.2)
     multipart-post (2.0.0)
+    netrc (0.10.3)
     pg (0.18.2)
     pry (0.10.1)
       coderay (~> 1.1.0)
@@ -104,12 +110,20 @@ GEM
     redis (3.2.1)
     redis-namespace (1.5.2)
       redis (~> 3.0, >= 3.0.4)
-    refile (0.5.3)
+    refile (0.5.5)
       mime-types
+      rest-client (~> 1.8)
       sinatra (~> 1.4.5)
+    refile-mini_magick (0.1.0)
+      mini_magick (~> 4.0)
+      refile (~> 0.5)
     refile-sequel (0.0.1)
       refile (~> 0.5)
       sequel (~> 4.0)
+    rest-client (1.8.0)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 3.0)
+      netrc (~> 0.7)
     roda (2.4.0)
       rack
     roda-symbolized_params (0.0.2)
@@ -134,6 +148,9 @@ GEM
     timecop (0.7.3)
     timers (4.0.1)
       hitimes
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.1)
     unindent (1.0)
     uri_template (0.6.0)
 

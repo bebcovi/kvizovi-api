@@ -1,7 +1,7 @@
 require "integration"
-
-require "pry"
 require "mini_magick"
+require "uri"
+require "pry"
 
 class AppTest < Minitest::Test
   include TestHelpers::Integration
@@ -101,7 +101,7 @@ class AppTest < Minitest::Test
     assert_resource response.resource("quiz")
 
     patch "/quizzes/#{quiz_id}",
-      {data: {attributes: {name: "New name"}}}, token_auth(token)
+      {data: {type: "quizzes", attributes: {name: "New name"}}}, token_auth(token)
     assert_equal "New name", response.resource("quiz")["name"]
 
     delete "/quizzes/#{quiz_id}", {}, token_auth(token)
@@ -128,7 +128,7 @@ class AppTest < Minitest::Test
     assert_resource response.resource("question")["quiz"]
 
     patch "/quizzes/#{quiz_id}/questions/#{question_id}",
-      {data: {attributes: {title: "New title"}}}, token_auth(token)
+      {data: {type: "questions", attributes: {title: "New title"}}}, token_auth(token)
     assert_equal "New title", response.resource("question")["title"]
 
     delete "/quizzes/#{quiz_id}/questions/#{question_id}", {}, token_auth(token)
@@ -168,16 +168,12 @@ class AppTest < Minitest::Test
 
   def test_image_upload
     post_original "/account", data: json_attributes_for(:janko, avatar: image)
-    avatar_url = response.resource("user").fetch("avatar_url")
-    avatar_url.gsub!(/\{\w+\}/, "{width}"=>"50", "{height}"=>"50")
-    avatar_path = URI(avatar_url).path
+    avatar = response.resource("user").fetch("avatar")
+    assert_equal ["small", "medium", "large"], avatar.keys
 
-    get avatar_path
-
+    get URI(avatar["small"]).path
     assert_equal 200, response.status
-    avatar = MiniMagick::Image.read(response.body)
-    assert avatar.width <= 50
-    assert avatar.height <= 50
+    MiniMagick::Image.read(response.body).validate!
   end
 
   def test_contact
@@ -224,6 +220,7 @@ class AppTest < Minitest::Test
     get "/foo"
     assert_equal 404, response.status
     assert_equal "page_not_found", response.error["id"]
+    assert_includes response.error["title"], "/foo"
   end
 
   def test_response_body_compression

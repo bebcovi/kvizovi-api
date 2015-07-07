@@ -7,7 +7,10 @@ require "kvizovi/mediators/quizzes/validate"
 module Kvizovi
   module Mediators
     class Quizzes
-      PERMITTED_FIELDS = [:name, :category, :image, :active, :questions_attributes]
+      PERMITTED_FIELDS = [
+        :name, :category, :active, :questions_attributes,
+        :image, :remove_image, :remote_image_url,
+      ]
 
       def self.search(**options)
         Finders::QuizFinder.search(**options)

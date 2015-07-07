@@ -57,9 +57,9 @@ module Kvizovi
     end
 
     class ResourceNotFound < Error
-      def initialize(message = "Resource not found")
+      def initialize(*)
         @id = "resource_not_found"
-        super message
+        super "Resource not found"
       end
 
       def status
@@ -68,9 +68,9 @@ module Kvizovi
     end
 
     class PageNotFound < Error
-      def initialize(message = "Page wasn't found")
+      def initialize(path)
         @id = "page_not_found"
-        super message
+        super "Route wasn't found: #{path}"
       end
 
       def status
