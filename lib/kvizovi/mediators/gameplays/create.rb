@@ -7,11 +7,7 @@ module Kvizovi
     class Gameplays
       class Create
         def self.call(attrs)
-          ids = attrs.delete(:associations)
-          gameplay = Models::Gameplay.new(
-            quiz_id: ids.fetch(:quiz),
-            player_ids: ids.fetch(:players),
-          )
+          gameplay = Models::Gameplay.new
           Utils.mass_assign!(gameplay, attrs, PERMITTED_FIELDS)
           new(gameplay).call
         end

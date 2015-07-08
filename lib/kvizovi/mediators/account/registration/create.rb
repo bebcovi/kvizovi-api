@@ -17,7 +17,6 @@ module Kvizovi
 
           def self.call(user_class, attrs)
             user = user_class.new
-            user.creator_id = (attrs.delete(:associations) || {})[:creator]
             Utils.mass_assign!(user, attrs, PERMITTED_FIELDS)
             new(user).call
           end

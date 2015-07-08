@@ -1,5 +1,3 @@
-require "inflection"
-
 module TestHelpers
   module Factory
     def create(name, additional_attributes = {})

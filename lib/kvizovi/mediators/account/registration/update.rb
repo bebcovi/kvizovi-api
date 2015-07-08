@@ -9,7 +9,7 @@ module Kvizovi
       class Registration
         class Update
           PERMITTED_FIELDS = [
-            :name, :email, :password, :old_password,
+            :name, :email, :password, :old_password, :creator_id,
             :avatar, :remove_avatar, :remote_avatar_url,
           ]
 
@@ -42,7 +42,6 @@ module Kvizovi
           end
 
           def assign!(attrs)
-            @user.creator_id = (attrs.delete(:associations) || {})[:creator]
             Utils.mass_assign!(@user, attrs, PERMITTED_FIELDS)
           end
 

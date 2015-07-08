@@ -16,16 +16,16 @@ module Kvizovi
 
     def resource(params, name)
       data = require_param(params, :data)
-      raise Kvizovi::Error, "no resource of type #{name}" if data[:type] != Inflection.plural(name.to_s)
       attributes = data.fetch(:attributes)
 
-      links = data.fetch(:relationships, {})
-      links.inject({}) do |hash, (name, info)|
-        attributes[:associations] ||= {}
-        if Hash === info[:data]
-          attributes[:associations].update(name => info[:data][:id])
+      relationships = data.fetch(:relationships, {})
+      relationships.each do |rel_name, value|
+        if Hash === value[:data]
+          id = value[:data][:id]
+          attributes[:"#{rel_name}_id"] = id
         else
-          attributes[:associations].update(name => info[:data].map { |rel| rel[:id] })
+          ids = value[:data].map { |rel| rel[:id] }
+          attributes.update(:"#{Inflection.singular(rel_name.to_s)}_ids" => ids)
         end
       end
 

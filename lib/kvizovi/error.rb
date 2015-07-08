@@ -47,11 +47,11 @@ module Kvizovi
           authorization_missing:        "No authorization credentials given",
           token_missing:                "No authorization token given",
           token_invalid:                "No user with that token",
-          credentials_invalid:          "Incorrect email or password",
+          credentials_invalid:          "Netočan email ili lozinka",
           confirmation_token_invalid:   "Confirmation token doesn't exist",
           password_reset_token_invalid: "Password reset token doesn't exist",
-          email_invalid:                "No user with that email address",
-          account_expired:              "Account hasn't been confirmed by email",
+          email_invalid:                "Ne postoji korisnik s tom email adresom",
+          account_expired:              "Trebate potvrditi korisnički račun preko dobivenog emaila",
         }
       end
     end

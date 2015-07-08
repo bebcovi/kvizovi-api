@@ -26,7 +26,7 @@ module TestHelpers
     end
 
     def image
-      Rack::Test::UploadedFile.new("test/fixtures/image.jpg")
+      Rack::Test::UploadedFile.new("test/fixtures/image.jpg", "image/jpeg")
     end
   end
 end

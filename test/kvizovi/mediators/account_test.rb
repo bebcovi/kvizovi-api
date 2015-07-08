@@ -38,7 +38,7 @@ class RegistrationTest < Minitest::Test
   end
 
   def test_persisting
-    user = Account.register!(attributes_for(:janko, associations: {creator: create(:matija).id}))
+    user = Account.register!(attributes_for(:janko, creator_id: create(:matija).id))
 
     refute user.new?
     assert_kind_of Integer, user.creator_id
@@ -229,7 +229,7 @@ class AccountUpdateTest < Minitest::Test
   end
 
   def test_creator_assignment
-    @account.update!(associations: {creator: create(:matija).id})
+    @account.update!(creator_id: create(:matija).id)
 
     assert_kind_of Integer, @user.creator_id
   end

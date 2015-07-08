@@ -5,7 +5,10 @@ require "kvizovi/mediators/gameplays/validate"
 module Kvizovi
   module Mediators
     class Gameplays
-      PERMITTED_FIELDS = [:quiz_snapshot, :answers, :started_at, :finished_at]
+      PERMITTED_FIELDS = [
+        :quiz_snapshot, :answers, :quiz_id, :player_ids,
+        :started_at, :finished_at
+      ]
 
       def self.create(attrs)
         Create.call(attrs)

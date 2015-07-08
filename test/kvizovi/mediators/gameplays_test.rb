@@ -15,7 +15,7 @@ class GameplaysTest < Minitest::Test
 
   def create_gameplay(quiz: @quiz, players: [@user], **options)
     Gameplays.create(attributes_for(:gameplay,
-      associations: {quiz: quiz.id, players: players.map(&:id)}).merge(options))
+      quiz_id: quiz.id, player_ids: players.map(&:id)).merge(options))
   end
 
   def test_creating
