@@ -7,7 +7,7 @@
 * `brew install redis` (>= 2.8)
 * `rbenv install 2.2.2; rbenv global 2.2.2`
 * `gem install bundler; bundle install`
-* `createdb kvizovi_development; createdb kvizovi_test; rake db:migrate`
+* `createdb kvizovi_development; RACK_ENV=development rake db:migrate`
 * `bundle exec rackup`
 
 ## Table of contents
