@@ -21,6 +21,10 @@ module Kvizovi
     plugin :heartbeat
     plugin :not_found
 
+    unless ENV["RACK_ENV"] == "production"
+      plugin :default_headers, "Access-Control-Allow-Origin"=>"*"
+    end
+
     use Rack::Deflater
 
     route do |r|
