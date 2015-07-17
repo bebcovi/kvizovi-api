@@ -127,7 +127,7 @@ Content-Type: application/json
       "id": "17",
       "attributes": {
         "kind": "boolean",
-        "title": "Dranaerys locked all of her 3 dragons in the dungeon."
+        "title": "Daenerys locked all of her 3 dragons in the dungeon."
       }
     }
   ]
@@ -446,7 +446,7 @@ Content-Type: application/json
       "id": "17",
       "attributes": {
         "kind": "boolean",
-        "title": "Dranaerys locked all of her 3 dragons in the dungeon."
+        "title": "Daenerys locked all of her 3 dragons in the dungeon."
       }
     }
   ]
