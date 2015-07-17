@@ -2,6 +2,7 @@ require "kvizovi/mediators/account/authenticator"
 require "kvizovi/mediators/account/registration"
 require "kvizovi/mediators/account/password"
 
+require "kvizovi/finders/user_finder"
 require "kvizovi/models"
 require "kvizovi/error"
 
@@ -32,6 +33,10 @@ module Kvizovi
         user = authenticate(:password_reset_token, token)
         new(user).set_password!(attributes)
         user
+      end
+
+      def self.typeahead(params)
+        Finders::UserFinder.typeahead(params)
       end
 
       def initialize(user)

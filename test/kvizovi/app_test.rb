@@ -73,6 +73,13 @@ class AppTest < Minitest::Test
     assert_equal creator_id, response.resource("user")["creator"]["id"]
   end
 
+  def test_creator_typeahead
+    register!(name: "Janko")
+
+    get "/account/typeahead", q: "ja", count: 5
+    assert_resource response.resource("user")
+  end
+
   def test_managing_quizzes
     register!
 
@@ -231,8 +238,8 @@ class AppTest < Minitest::Test
 
   private
 
-  def register!
-    user_data = json_attributes_for(:janko)
+  def register!(**attributes)
+    user_data = json_attributes_for(:janko, **attributes)
     post "/account", data: user_data
     @email = user_data.fetch(:attributes).fetch(:email)
     @password = user_data.fetch(:attributes).fetch(:password)

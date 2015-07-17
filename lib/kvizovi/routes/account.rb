@@ -36,6 +36,10 @@ module Kvizovi
       r.get "players" do
         Mediators::Account.new(current_user).players
       end
+
+      r.get "typeahead" do
+        Mediators::Account.typeahead(params)
+      end
     end
   end
 end

@@ -186,6 +186,8 @@ Content-Type: application/json
 }
 ```
 
+To assign creators, you can use users' [typeahead endpoint](#user-typeahead).
+
 If the user is successfully registered, a confirmation email will be sent
 to their email address. The email will include a link to
 `http://kvizovi.org/account/confirm?token=abc123`. When user visits that URL,
@@ -218,8 +220,14 @@ Authorization: Token token="abc123"
 You can retrieve all players of a user:
 
 ```http
-GET "/account/players" HTTP/1.1
+GET /account/players HTTP/1.1
 Authorization: Token token="abc123"
+```
+
+#### User typeahead
+
+```http
+GET /account/typeahead?q=prelog&count=5 HTTP/1.1
 ```
 
 ### Updating users

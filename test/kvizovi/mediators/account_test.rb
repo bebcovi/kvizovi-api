@@ -288,3 +288,13 @@ class AccountInfoTest < Minitest::Test
     assert_equal [matija], @account.players.to_a
   end
 end
+
+class CreatorTypeaheadTest < Minitest::Test
+  include TestHelpers::Unit
+
+  def test_query
+    janko = create(:janko, name: "Janko")
+
+    assert_equal [janko], Account.typeahead(q: "ja", count: 1).to_a
+  end
+end
