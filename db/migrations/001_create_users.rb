@@ -6,6 +6,7 @@ Sequel.migration do
 
       column :name,               :varchar, null: false, unique: true
       column :email,              :varchar, null: false, unique: true
+      column :username,           :varchar
       column :avatar_id,          :varchar
       column :encrypted_password, :varchar
       column :token,              :varchar

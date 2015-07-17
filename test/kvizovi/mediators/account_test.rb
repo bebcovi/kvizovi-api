@@ -83,6 +83,12 @@ class AuthenticationTest < Minitest::Test
     assert_instance_of Kvizovi::Models::User, user
   end
 
+  def test_authenticating_with_username
+    @user.update(username: "janko")
+
+    Account.authenticate([@user.username, @user.password])
+  end
+
   def test_invalid_password
     assert_raises(Kvizovi::Error::Unauthorized) do
       Account.authenticate([@user.email, "incorrect password"])

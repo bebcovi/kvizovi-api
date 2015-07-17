@@ -28,7 +28,7 @@ module Kvizovi
 
         def authenticate_from_credentials(credentials)
           if credentials.is_a?(Array)
-            user = @user_class.find(email: credentials[0])
+            user = @user_class.find{(email =~ credentials[0]) | (username =~ credentials[0])}
             user if user && password_matches?(user, credentials[1])
           else
             authenticate_from_token(credentials)

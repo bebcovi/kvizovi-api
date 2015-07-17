@@ -8,8 +8,8 @@ Sequel.migration do
       column :player_ids,    "integer[]", null: false
       column :answers,       :jsonb,      null: false
 
-      column :started_at,  :timestamp
-      column :finished_at, :timestamp
+      column :started_at,  :timestamp, null: false
+      column :finished_at, :timestamp, null: false
     end
   end
 end

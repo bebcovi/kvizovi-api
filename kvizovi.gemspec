@@ -25,6 +25,7 @@ Gem::Specification.new do |gem|
 
   # Database
   gem.add_dependency "sequel", "~> 4.24"
+  gem.add_dependency "sequel_pg"
   gem.add_dependency "pg"
   gem.add_dependency "sequel_postgresql_triggers", "~> 1.0.8"
   gem.add_dependency "elasticsearch", "~> 1.0.12"
@@ -43,6 +44,11 @@ Gem::Specification.new do |gem|
   gem.add_dependency "bcrypt", "~> 3.1"
   gem.add_dependency "unindent"
   gem.add_dependency "as-duration", "~> 0.1"
+  gem.add_dependency "memoizable"
+  gem.add_dependency "inflecto"
+
+  # Legacy
+  gem.add_dependency "activesupport"
 
   # Backgound jobs
   gem.add_dependency "sidekiq", "~> 3.4.1"

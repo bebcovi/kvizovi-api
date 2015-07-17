@@ -7,8 +7,14 @@
 * `brew install redis` (>= 2.8)
 * `rbenv install 2.2.2; rbenv global 2.2.2`
 * `gem install bundler; bundle install`
-* `createdb kvizovi_development; RACK_ENV=development rake db:migrate`
+* `createdb kvizovi_development; RACK_ENV=development bundle exec rake db:migrate`
 * `bundle exec rackup`
+
+### Migrating legacy database
+
+* `heroku pg:pull DATABASE kvizovi_legacy`
+* `createdb kvizovi_development`
+* `bundle exec rake legacy:migrate`
 
 ## Table of contents
 
@@ -281,6 +287,7 @@ Authorization: Token token="abc123"
 | `name`            | string  | name that will be displayed                      |
 | `category`        | string  | e.g. "books", "movies", "history", ...           |
 | `active`          | boolean | whether the quiz is playable                     |
+| `shuffle`         | boolean | whether questions should be shuffled             |
 | `questions_count` | integer | how many questions does this quiz currently have |
 | `image`           | image   | the image describing the quiz                    |
 | `created_at`      | time    | when the quiz was created                        |

@@ -1,8 +1,6 @@
 require "kvizovi/configuration/sequel"
 
-DB.extension :pg_array
-DB.extension :pg_json
-DB.extension :pagination
+DB.extension :pg_array, :pg_json, :pagination
 
 Sequel::Model.raise_on_save_failure = true
 
