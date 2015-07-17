@@ -6,3 +6,4 @@ db_config = db_config.fetch(ENV["RACK_ENV"] || "development")
 db_config.merge!("username" => ENV["USER"])
 
 DB = Sequel.connect(db_config)
+DB.test_connection

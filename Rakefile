@@ -1,4 +1,5 @@
 require "rake/testtask"
+require "yaml"
 
 import "tasks/legacy.rake"
 
@@ -10,26 +11,21 @@ end
 task :default => :test
 
 namespace :db do
-  task :setup do
-    ENV["RACK_ENV"] ||= "test"
-    require "kvizovi/configuration/sequel"
-  end
-
   desc "Migrate the database (you can specify the version with `db:migrate[N]`)"
-  task :migrate, [:version] => [:setup] do |task, args|
+  task :migrate, [:version] do |task, args|
     version = args[:version] ? Integer(args[:version]) : nil
     migrate(version)
     dump_schema
   end
 
   desc "Undo all migrations"
-  task :demigrate => [:setup] do
+  task :demigrate do
     migrate(0)
     dump_schema
   end
 
   desc "Undo all migrations and migrate again"
-  task :remigrate => [:setup] do
+  task :remigrate do
     migrate(0)
     migrate
     dump_schema
@@ -37,13 +33,29 @@ namespace :db do
 
   def migrate(version = nil)
     Sequel.extension :migration
-    Sequel::Migrator.apply(DB, "db/migrations", version)
+    environments { Sequel::Migrator.apply(DB, "db/migrations", version) }
   end
 
   def dump_schema
+    require "kvizovi/configuration/sequel"
     system "pg_dump #{DB.opts[:database]} > db/schema.sql"
     DB.extension :schema_dumper
     File.write("db/schema.rb", DB.dump_schema_migration(same_db: true))
+  end
+
+  def environments
+    YAML.load_file("config/database.yml").keys.each do |env|
+      begin
+        ENV["RACK_ENV"] = env
+        require "kvizovi/configuration/sequel"
+        yield
+      rescue Sequel::DatabaseConnectionError
+      ensure
+        $LOADED_FEATURES.reject! { |path| path.include?("kvizovi/configuration/sequel") }
+        Object.send(:remove_const, :DB) if Object.const_defined?(:DB)
+        ENV.delete("RACK_ENV")
+      end
+    end
   end
 end
 
