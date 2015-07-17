@@ -18,7 +18,7 @@ module Kvizovi
         end
 
         r.post auth do
-          Mediators::Quizzes.new(current_user).create(resource(:quiz))
+          Mediators::Quizzes.new(current_user).create(quiz_attributes)
         end
       end
 
@@ -32,7 +32,7 @@ module Kvizovi
         end
 
         r.patch auth do
-          Mediators::Quizzes.new(current_user).update(quiz_id, resource(:quiz))
+          Mediators::Quizzes.new(current_user).update(quiz_id, quiz_attributes)
         end
 
         r.delete auth do
@@ -50,7 +50,7 @@ module Kvizovi
             end
 
             r.post do
-              Mediators::Questions.new(quiz).create(resource(:question))
+              Mediators::Questions.new(quiz).create(question_attributes)
             end
           end
 
@@ -60,7 +60,7 @@ module Kvizovi
             end
 
             r.patch do
-              Mediators::Questions.new(quiz).update(question_id, resource(:question))
+              Mediators::Questions.new(quiz).update(question_id, question_attributes)
             end
 
             r.delete do
@@ -68,6 +68,19 @@ module Kvizovi
             end
           end
         end
+      end
+    end
+
+    def quiz_attributes
+      resource(:quiz).tap do |attributes|
+        uploaded_file(attributes, :image)
+        Array(attributes[:question_attributes]).each { |hash| uploaded_file(hash, :image) }
+      end
+    end
+
+    def question_attributes
+      resource(:question).tap do |attributes|
+        uploaded_file(attributes, :image)
       end
     end
   end

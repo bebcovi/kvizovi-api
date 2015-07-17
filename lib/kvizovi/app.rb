@@ -15,7 +15,6 @@ module Kvizovi
     plugin :json, classes: Serializer::CLASSES, serializer: Serializer, include_request: true
     plugin :json_parser
     plugin :symbolized_params
-    plugin :uploaded_file # local plugin
     plugin :error_handler
     plugin :multi_route
     plugin :heartbeat
@@ -49,6 +48,10 @@ module Kvizovi
 
     def required(name)
       Utils.require_param(params, name)
+    end
+
+    def uploaded_file(hash, key)
+      Utils.uploaded_file(hash, key)
     end
 
     error do |error|

@@ -5,7 +5,7 @@ module Kvizovi
     route "gameplays" do |r|
       r.is do
         r.post do
-          Mediators::Gameplays.create(resource(:gameplay))
+          Mediators::Gameplays.create(gameplay_attributes)
         end
 
         r.get do
@@ -19,6 +19,10 @@ module Kvizovi
           Mediators::Gameplays.new(current_user).find(gameplay_id)
         end
       end
+    end
+
+    def gameplay_attributes
+      resource(:gameplay)
     end
   end
 end

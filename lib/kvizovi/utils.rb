@@ -1,6 +1,7 @@
 require "json"
 require "inflection"
 require "kvizovi/error"
+require "kvizovi/uploaded_file"
 
 module Kvizovi
   module Utils
@@ -49,6 +50,12 @@ module Kvizovi
       object.set_only(attrs, *permitted_fields)
     rescue Sequel::MassAssignmentRestriction => error
       raise Kvizovi::Error::InvalidAttribute, error.message
+    end
+
+    def uploaded_file(hash, key)
+      if hash[key].is_a?(Hash) && hash[key].key?(:tempfile)
+        hash[key] = UploadedFile.new(hash[key])
+      end
     end
   end
 end

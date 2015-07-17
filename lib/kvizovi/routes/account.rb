@@ -9,11 +9,11 @@ module Kvizovi
         end
 
         r.post do
-          Mediators::Account.register!(resource(:user))
+          Mediators::Account.register!(user_attributes)
         end
 
         r.patch do
-          Mediators::Account.new(current_user).update!(resource(:user))
+          Mediators::Account.new(current_user).update!(user_attributes)
         end
 
         r.delete do
@@ -30,7 +30,7 @@ module Kvizovi
       end
 
       r.patch "password" do
-        Mediators::Account.set_password!(required(:token), resource(:user))
+        Mediators::Account.set_password!(required(:token), user_attributes)
       end
 
       r.get "players" do
@@ -39,6 +39,12 @@ module Kvizovi
 
       r.get "typeahead" do
         Mediators::Account.typeahead(params)
+      end
+    end
+
+    def user_attributes
+      resource(:user).tap do |attributes|
+        uploaded_file(attributes, :avatar)
       end
     end
   end
