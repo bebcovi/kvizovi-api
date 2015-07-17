@@ -12,8 +12,7 @@
 
 ### Migrating legacy database
 
-* `heroku pg:pull DATABASE kvizovi_legacy`
-* `createdb kvizovi_development`
+* `heroku pg:pull DATABASE kvizovi_legacy --app kvizovi`
 * `bundle exec rake legacy:migrate`
 
 ## Table of contents
@@ -620,11 +619,11 @@ GET /gameplays/43?include=players,quiz HTTP/1.1
 Authorization: Token token="abc123"
 ```
 
-## Images (*NOT READY*)
+## Images
 
-Users, quizzes and questions can all have images attached. When you send an
-attached image (e.g. as `avatar`), the response will include the image URL
-template:
+Users, quizzes and questions can all have images attached. You can assign an
+uploaded file to fields of type `image`, and that field will be displayed as
+a hash of sizes.
 
 ```http
 PATCH /quizzes/34 HTTP/1.1
@@ -650,19 +649,23 @@ Content-Type: application/json
     "type": "quizzes",
     "id": "32",
     "attributes": {
-      "image": "http://example.org/attachments/store/fit/{width}/{height}"
+      "image": {
+        "small": "http://example.org/attachments/store/fit/300/300",
+        "medium": "http://example.org/attachments/store/fit/500/500",
+        "large": "http://example.org/attachments/store/fit/800/800"
+      }
     }
   }
 }
 ```
 
-You only need to replace `{width}` and `{height}` with wanted dimensions.
+The sizes have to be predefined for security reasons, but you can change them
+in the source code for [users](/lib/kvizovi/mappers/user_mapper.rb),
+[quizzes](/lib/kvizovi/mappers/quiz_mapper.rb) and
+[questions](/lib/kvizovi/mappers/question_mapper.rb).
 
-*__Note__: First time you request an image URL, it will take some time to
-process the request. So, to hide slow loading from the user, you could prefetch
-the URLs (dimensions) you need in the background.*
-
-You can also pass an image as a URL, just send `{"avatar_remote_url": "http://example.com/image.jpg"}`.
+You can also pass an image as a URL, in this case `{"avatar_remote_url":
+"http://example.com/image.jpg"}`.
 
 To delete an image, send `{"avatar_remove": true}`.
 
