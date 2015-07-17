@@ -33,30 +33,33 @@ namespace :db do
 
   def migrate(version = nil)
     Sequel.extension :migration
-    environments { Sequel::Migrator.apply(DB, "db/migrations", version) }
+    databases.each { |db| Sequel::Migrator.apply(db, "db/migrations", version) }
   end
 
   def dump_schema
-    require "kvizovi/configuration/sequel"
-    system "pg_dump #{DB.opts[:database]} > db/schema.sql"
-    DB.extension :schema_dumper
-    File.write("db/schema.rb", DB.dump_schema_migration(same_db: true))
+    unless ENV["RACK_ENV"] == "production"
+      db = databases.first
+      system "pg_dump #{db.opts[:database]} > db/schema.sql"
+      db.extension :schema_dumper
+      File.write("db/schema.rb", db.dump_schema_migration(same_db: true))
+    end
   end
 
-  def environments
-    YAML.load_file("config/database.yml").keys.each do |env|
-      next if env == "defaults"
-      begin
-        ENV["RACK_ENV"] = env
-        require "kvizovi/configuration/sequel"
-        yield
-      rescue Sequel::DatabaseConnectionError
-      ensure
-        $LOADED_FEATURES.reject! { |path| path.include?("kvizovi/configuration/sequel") }
-        Object.send(:remove_const, :DB) if Object.const_defined?(:DB)
-        ENV.delete("RACK_ENV")
-      end
-    end
+  def databases
+    ["development", "test", "production"]
+      .map { |env| get_database(env) }
+      .compact
+  end
+
+  def get_database(env)
+    ENV["RACK_ENV"] = env
+    require "kvizovi/configuration/sequel"
+    DB
+  rescue Sequel::DatabaseConnectionError
+  ensure
+    Object.send(:remove_const, :DB) if Object.const_defined?(:DB)
+    $LOADED_FEATURES.reject! { |path| path.include?("kvizovi/configuration/sequel") }
+    ENV.delete("RACK_ENV")
   end
 end
 
