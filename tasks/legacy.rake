@@ -84,7 +84,7 @@ class LegacyMigrate
   def migrate_questions!
     questions = legacy_db[:questions].map { |question| translate_question(question) }
 
-    db[:questions].multi_insert(questions)
+    questions.each { |question| db[:questions].insert(question) }
   end
 
   def migrate_gameplays!

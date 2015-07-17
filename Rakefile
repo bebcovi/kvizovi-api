@@ -45,6 +45,7 @@ namespace :db do
 
   def environments
     YAML.load_file("config/database.yml").keys.each do |env|
+      next if env == "defaults"
       begin
         ENV["RACK_ENV"] = env
         require "kvizovi/configuration/sequel"

@@ -9,7 +9,7 @@ Sequel.migration do
       column :image_id,        :varchar
       column :active,          :boolean, default: false
       column :shuffle,         :boolean, default: false
-      column :questions_count, :integer
+      column :questions_count, :integer, default: 0
 
       column :created_at, :timestamp
       column :updated_at, :timestamp
