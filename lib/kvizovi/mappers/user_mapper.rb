@@ -6,6 +6,14 @@ module Kvizovi
       attributes :id, :name, :email, :token, :avatar,
                  :created_at, :updated_at
 
+      def attributes
+        if env["PATH_INFO"] == "/account"
+          super
+        else
+          super.reject { |attr| [:token].include?(attr.name) }
+        end
+      end
+
       def avatar
         {
           small:  attachment_url(:avatar, 300, 300),

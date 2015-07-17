@@ -64,12 +64,12 @@ class AppTest < Minitest::Test
 
     post "/account", data: json_attributes_for(:matija).merge(
       relationships: {creator: {data: {type: "users", id: creator_id}}})
-    player_id = response.resource("user")["id"]
+    player_id, player_token = response.resource("user").values_at("id", "token")
 
     get "/account/players", {}, token_auth(token)
     assert_equal player_id, response.resource("user")["id"]
 
-    get "/account", {include: "creator"}, token_auth(response.resource("user")["token"])
+    get "/account", {include: "creator"}, token_auth(player_token)
     assert_equal creator_id, response.resource("user")["creator"]["id"]
   end
 
