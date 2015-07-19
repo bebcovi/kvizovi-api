@@ -3,6 +3,7 @@ require "memoizable"
 require "inflecto"
 require "yaml"
 require "active_support/hash_with_indifferent_access"
+require "securerandom"
 
 namespace :legacy do
   task :migrate do
@@ -70,6 +71,7 @@ class LegacyMigrate
       .exclude(
         legacy_db[:schools].where(email: :students__email).exists
       )
+      .exclude(first_name: "Matija", last_name: "Marohnić")
       .map { |student| translate_student(student)  }
 
     db[:users].multi_insert(users)
@@ -127,8 +129,9 @@ class LegacyMigrate
           raise "School #{school[:id]} doesn't have a name"
         end
       ),
-      username:           school.fetch(:username),
-      email:              school.fetch(:email),
+      username:           school.fetch(:username).strip,
+      email:              school.fetch(:email).strip,
+      token:              SecureRandom.hex,
       encrypted_password: school.fetch(:encrypted_password),
       confirmation_token: school.fetch(:confirmation_token),
       confirmed_at:       school.fetch(:confirmed_at),
@@ -140,8 +143,9 @@ class LegacyMigrate
   def translate_student(student)
     {
       name:               student.values_at(:first_name, :last_name).map(&:strip).join(" "),
-      username:           student.fetch(:username),
-      email:              student.fetch(:email) || "janko.marohnic+kvizovi-#{student[:id]}gmail.com",
+      username:           student.fetch(:username).strip,
+      email:              (student.fetch(:email) || "janko.marohnic+kvizovi-#{student[:id]}gmail.com").strip,
+      token:              SecureRandom.hex,
       creator_id:         school_mapping.fetch(student.fetch(:school_id)),
       encrypted_password: student.fetch(:encrypted_password),
       confirmation_token: student.fetch(:confirmation_token),
@@ -153,7 +157,7 @@ class LegacyMigrate
 
   def translate_quiz(quiz)
     {
-      name:       quiz.fetch(:name),
+      name:       quiz.fetch(:name).strip,
       category:   "literature",
       creator_id: school_mapping.fetch(quiz.fetch(:school_id)),
       active:     quiz.fetch(:activated),
@@ -165,12 +169,12 @@ class LegacyMigrate
 
   def translate_question(question)
     {
-      title: question.fetch(:content),
-      content: Sequel.pg_jsonb(YAML.load(question.fetch(:data))),
-      position: question.fetch(:position) || 1,
-      quiz_id: quiz_mapping.fetch(question.fetch(:quiz_id)),
-      kind: Inflecto.underscore(question.fetch(:type).chomp("Question")),
-      hint: question.fetch(:hint),
+      title:      question.fetch(:content),
+      content:    Sequel.pg_jsonb(YAML.load(question.fetch(:data))),
+      position:   question.fetch(:position) || 1,
+      quiz_id:    quiz_mapping.fetch(question.fetch(:quiz_id)),
+      kind:       Inflecto.underscore(question.fetch(:type).chomp("Question")),
+      hint:       question.fetch(:hint),
       created_at: question.fetch(:created_at),
       updated_at: question.fetch(:updated_at),
     }

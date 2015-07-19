@@ -11,8 +11,8 @@ Sequel.migration do
       column :shuffle,         :boolean, default: false
       column :questions_count, :integer, default: 0
 
-      column :created_at, :timestamp
-      column :updated_at, :timestamp
+      column :created_at, :timestamp, null: false
+      column :updated_at, :timestamp, null: false
     end
   end
 end

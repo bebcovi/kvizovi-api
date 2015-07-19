@@ -9,6 +9,7 @@ Sequel::Model.plugin :timestamps, update_on_create: true
 Sequel::Model.plugin :nested_attributes
 Sequel::Model.plugin :pg_array_associations
 Sequel::Model.plugin :tactical_eager_loading
+Sequel::Model.plugin :string_stripper
 
 module Kvizovi
   module Models

@@ -10,12 +10,12 @@ Sequel.migration do
       column :title,    :text,    null: false
       column :content,  :jsonb,   null: false
       column :image_id, :varchar
-      column :hint,     :varchar
+      column :hint,     :text
 
       column :position, :integer, null: false
 
-      column :created_at, :timestamp
-      column :updated_at, :timestamp
+      column :created_at, :timestamp, null: false
+      column :updated_at, :timestamp, null: false
     end
 
     pgt_counter_cache(:quizzes, :id, :questions_count, :questions, :quiz_id, trigger_name: :questions_counter)

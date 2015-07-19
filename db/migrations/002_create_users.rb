@@ -5,8 +5,8 @@ Sequel.migration do
       foreign_key :creator_id, :users
 
       column :name,               :varchar, null: false, unique: true
-      column :email,              :varchar, null: false, unique: true
-      column :username,           :varchar
+      column :email,              :citext,  null: false, unique: true
+      column :username,           :varchar,              unique: true
       column :avatar_id,          :varchar
       column :encrypted_password, :varchar
       column :token,              :varchar
@@ -16,8 +16,8 @@ Sequel.migration do
 
       column :password_reset_token, :varchar
 
-      column :created_at, :timestamp
-      column :updated_at, :timestamp
+      column :created_at, :timestamp, null: false
+      column :updated_at, :timestamp, null: false
     end
   end
 end

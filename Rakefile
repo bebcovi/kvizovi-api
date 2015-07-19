@@ -46,7 +46,7 @@ namespace :db do
   end
 
   def databases
-    ["development", "test", "production"]
+    @databases ||= ["development", "test", "production"]
       .map { |env| get_database(env) }
       .compact
   end
