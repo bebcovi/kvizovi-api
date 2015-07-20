@@ -8,6 +8,7 @@ Sequel.migration do
       column :email,              :citext,  null: false, unique: true
       column :username,           :varchar,              unique: true
       column :avatar_id,          :varchar
+      column :avatar_filename,    :varchar
       column :encrypted_password, :varchar
       column :token,              :varchar
 

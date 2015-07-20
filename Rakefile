@@ -1,5 +1,4 @@
 require "rake/testtask"
-require "yaml"
 
 import "tasks/legacy.rake"
 
@@ -32,8 +31,10 @@ namespace :db do
   end
 
   def migrate(version = nil)
-    Sequel.extension :migration
-    databases.each { |db| Sequel::Migrator.apply(db, "db/migrations", version) }
+    databases.each do |db|
+      Sequel.extension :migration
+      Sequel::Migrator.apply(db, "db/migrations", version)
+    end
   end
 
   def dump_schema

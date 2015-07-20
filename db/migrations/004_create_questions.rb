@@ -6,11 +6,12 @@ Sequel.migration do
       primary_key :id
       foreign_key :quiz_id, :quizzes
 
-      column :kind,     :varchar, null: false
-      column :title,    :text,    null: false
-      column :content,  :jsonb,   null: false
-      column :image_id, :varchar
-      column :hint,     :text
+      column :kind,           :varchar, null: false
+      column :title,          :text,    null: false
+      column :content,        :jsonb,   null: false
+      column :image_id,       :varchar
+      column :image_filename, :varchar
+      column :hint,           :text
 
       column :position, :integer, null: false
 

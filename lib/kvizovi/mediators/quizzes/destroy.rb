@@ -1,5 +1,5 @@
-require "kvizovi/configuration/sequel"
 require "kvizovi/mediators/questions"
+require "kvizovi/mediators/gameplays"
 require "kvizovi/elasticsearch"
 
 module Kvizovi
@@ -24,8 +24,9 @@ module Kvizovi
         private
 
         def delete!
-          DB.transaction do
+          @quiz.model.db.transaction do
             Questions.new(@quiz).destroy_all
+            Gameplays.new(@quiz).destroy_all
             @quiz.destroy
           end
         end

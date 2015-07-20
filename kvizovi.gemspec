@@ -16,12 +16,12 @@ Gem::Specification.new do |gem|
 
 
   # App
-  gem.add_dependency "roda", "~> 2.4"
+  gem.add_dependency "roda", "~> 2.5"
   gem.add_dependency "roda-symbolized_params"
-  gem.add_dependency "puma"
+  gem.add_dependency "puma", "~> 2.12"
 
   # JSON
-  gem.add_dependency "yaks"
+  gem.add_dependency "yaks", "~> 0.11"
 
   # Database
   gem.add_dependency "sequel", "~> 4.24"
@@ -34,8 +34,9 @@ Gem::Specification.new do |gem|
   gem.add_dependency "refile", ">= 0.5.5"
   gem.add_dependency "refile-sequel"
   gem.add_dependency "refile-mini_magick", "~> 0.1"
-  gem.add_dependency "mime-types", ">= 2.5"
   gem.add_dependency "mini_magick", "~> 4.2"
+  gem.add_dependency "refile-s3", "~> 0.1"
+  gem.add_dependency "aws-sdk", "~> 2.1"
 
   # Email
   gem.add_dependency "simple_mailer", "~> 1.3"
@@ -46,6 +47,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "as-duration", "~> 0.1"
   gem.add_dependency "memoizable"
   gem.add_dependency "inflecto"
+  gem.add_dependency "dotenv", "~> 2.0"
 
   # Legacy
   gem.add_dependency "activesupport"

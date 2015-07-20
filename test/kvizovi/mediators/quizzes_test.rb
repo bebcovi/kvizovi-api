@@ -106,6 +106,15 @@ class QuizzesTest < Minitest::Test
     refute question.exists?
   end
 
+  def test_destroying_associated_gameplays
+    quiz = @quizzes.create(attributes_for(:quiz))
+    gameplay = quiz.add_gameplay(attributes_for(:gameplay))
+
+    @quizzes.destroy(quiz.id)
+
+    refute gameplay.exists?
+  end
+
   def test_destroying_scopes_to_user
     quiz = create(:quiz, creator: create(:matija))
 

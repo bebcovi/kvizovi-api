@@ -1,4 +1,3 @@
-require "kvizovi/configuration/sequel"
 require "kvizovi/mediators/quizzes"
 require "kvizovi/mediators/gameplays"
 
@@ -24,7 +23,7 @@ module Kvizovi
           private
 
           def delete!
-            DB.transaction do
+            @user.model.db.transaction do
               Quizzes.new(@user).destroy_all
               Gameplays.new(@user).destroy_all
               @user.destroy
