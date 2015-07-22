@@ -34,13 +34,6 @@ class QuizzesTest < Minitest::Test
     assert_equal [quiz2], Quizzes.search(page: {number: 2, size: 1}).to_a
   end
 
-  def test_search_active
-    Kvizovi::ElasticsearchIndex.noop = false
-    quiz = @quizzes.create(attributes_for(:quiz, active: false))
-
-    assert_equal [], Quizzes.search(q: "").to_a
-  end
-
   def test_generic_finding
     quiz = @quizzes.create(attributes_for(:quiz))
 

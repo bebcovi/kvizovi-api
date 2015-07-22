@@ -8,7 +8,6 @@ Sequel.migration do
       column :category,        :varchar, null: false
       column :image_id,        :varchar
       column :image_filename,  :varchar
-      column :active,          :boolean, default: false
       column :shuffle,         :boolean, default: false
       column :questions_count, :integer, default: 0
 

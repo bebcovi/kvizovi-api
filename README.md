@@ -299,7 +299,6 @@ Authorization: Token token="abc123"
 | `id`              | string  | unique identifier                                |
 | `name`            | string  | name that will be displayed                      |
 | `category`        | string  | e.g. "books", "movies", "history", ...           |
-| `active`          | boolean | whether the quiz is playable                     |
 | `shuffle`         | boolean | whether questions should be shuffled             |
 | `questions_count` | integer | how many questions does this quiz currently have |
 | `image`           | image   | the image describing the quiz                    |
@@ -361,7 +360,6 @@ Content-Type: application/json
     "attributes": {
       "name": "Game of Thrones",
       "category": "movies",
-      "active": true,
     }
   }
 }

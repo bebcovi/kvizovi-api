@@ -164,7 +164,6 @@ module Legacy
         name:       quiz.fetch(:name).strip,
         category:   "literature",
         creator_id: school_mapping.fetch(quiz.fetch(:school_id)),
-        active:     quiz.fetch(:activated),
         shuffle:    quiz.fetch(:shuffle_questions),
         created_at: quiz.fetch(:created_at),
         updated_at: quiz.fetch(:updated_at),

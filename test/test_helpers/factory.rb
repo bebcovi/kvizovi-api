@@ -42,7 +42,6 @@ module TestHelpers
       quiz: [:Quiz, {
         name: "Game of Thrones",
         category: "movies",
-        active: true,
         shuffle: false,
       }],
       question: [:Question, {

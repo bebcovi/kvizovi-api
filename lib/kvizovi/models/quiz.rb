@@ -8,8 +8,6 @@ module Kvizovi
       one_to_many :questions, order: :position
       one_to_many :gameplays
 
-      subset(:active, active: true)
-
       nested_attributes :questions
 
       extend Refile::Sequel::Attachment

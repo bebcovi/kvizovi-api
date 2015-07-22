@@ -7,7 +7,7 @@ module Kvizovi
       model Models::Quiz
 
       def search(q: nil, category: nil, page: nil, **)
-        quizzes = dataset.active
+        quizzes = dataset
         quizzes = new(quizzes).from_query(q) if q
         quizzes = new(quizzes).with_category(category) if category
         quizzes = new(quizzes).paginate(page) if page
