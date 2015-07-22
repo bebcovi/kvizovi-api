@@ -43,6 +43,7 @@ module TestHelpers
         name: "Game of Thrones",
         category: "movies",
         active: true,
+        shuffle: false,
       }],
       question: [:Question, {
         kind: "choice",

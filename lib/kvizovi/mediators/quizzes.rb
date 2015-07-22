@@ -8,7 +8,7 @@ module Kvizovi
   module Mediators
     class Quizzes
       PERMITTED_FIELDS = [
-        :name, :category, :active, :questions_attributes,
+        :name, :category, :active, :shuffle, :questions_attributes,
         :image, :remove_image, :remote_image_url,
       ]
 

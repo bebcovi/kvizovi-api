@@ -8,11 +8,17 @@
 * `rbenv install 2.2.2; rbenv global 2.2.2`
 * `gem install bundler; bundle install`
 * `createdb kvizovi_development; bundle exec rake db:migrate`
-* `bundle exec rackup`
+* `gem install foreman`
+* `gem install mailcatcher -v 0.5.12`
+* `foreman start`
+
+Now you have the API running on `localhost:3000`, and you can see sent emails
+on `localhost:1080`.
 
 ### Migrating legacy database
 
 * `heroku pg:pull DATABASE kvizovi_legacy --app kvizovi`
+* Request for the `.env` file with credentials
 * `bundle exec rake legacy:migrate`
 
 ## Table of contents

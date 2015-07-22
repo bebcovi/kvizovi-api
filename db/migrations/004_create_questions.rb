@@ -12,8 +12,7 @@ Sequel.migration do
       column :image_id,       :varchar
       column :image_filename, :varchar
       column :hint,           :text
-
-      column :position, :integer, null: false
+      column :position,       :integer, null: false
 
       column :created_at, :timestamp, null: false
       column :updated_at, :timestamp, null: false

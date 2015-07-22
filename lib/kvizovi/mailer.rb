@@ -1,4 +1,4 @@
-require "simple_mailer"
+require "kvizovi/configuration/email"
 require "sidekiq"
 require "unindent"
 
