@@ -11,8 +11,10 @@ module TestHelpers
     def log
       require "logger"
       DB.logger = Logger.new(STDOUT)
-      yield
-      DB.logger = Logger.new(nil)
+      if block_given?
+        yield
+        DB.logger = Logger.new(nil)
+      end
     end
 
     def invalid(&block)

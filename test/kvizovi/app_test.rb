@@ -222,7 +222,7 @@ class AppTest < Minitest::Test
     post "/quizzes", {data: {type: "quizzes", attributes: {}}}, token_auth(token)
     assert_equal 400, response.status
     assert_equal "validation_failed", response.error["id"]
-    assert_nonempty Array, response.error.fetch("meta")["errors"]
+    assert_nonempty Hash, response.error.fetch("meta")["errors"]
 
     get "/foo"
     assert_equal 404, response.status

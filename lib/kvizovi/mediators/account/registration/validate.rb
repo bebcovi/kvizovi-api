@@ -21,15 +21,13 @@ module Kvizovi
           private
 
           def validate!
-            @user.validates_presence :name, message: "Ime mora biti unešeno"
-            @user.validates_presence :email, message: "Email adresa mora biti unešena"
-            @user.validates_unique :name, message: "Već postoji korisnik s imenom #{@user.name.inspect}"
-            @user.validates_unique :email, message: "Već postoji korisnik s email adresom #{@user.email.inspect}"
+            @user.validates_presence [:name, :email]
+            @user.validates_unique :name, :email
             if @user.new?
-              @user.validates_presence :password, message: "Lozinka mora biti unešena"
+              @user.validates_presence :password
             else
               if @user.password && !password_matches?(@user.old_password)
-                @user.errors.add(:old_password, "Stara lozinka ne odgovara trenutnoj")
+                @user.errors.add(:old_password, "doesn't match the current one")
               end
             end
 

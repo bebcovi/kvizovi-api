@@ -41,7 +41,14 @@ module Kvizovi
 
     def valid!(object)
       if object.errors.any?
-        errors = object.errors.flat_map { |column, messages| messages }
+        errors = {}
+        object.errors.each do |key, value|
+          if key.is_a?(Symbol)
+            errors[key] = value
+          else
+            errors[key.first] = value
+          end
+        end
         raise Kvizovi::Error::ValidationFailed, errors
       end
     end

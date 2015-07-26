@@ -20,9 +20,9 @@ module Kvizovi
         private
 
         def validate_quiz!
-          @quiz.validates_presence :name, message: "Ime kviza ne može biti prazno"
-          @quiz.validates_presence :category, message: "Kategorija kviza ne može biti prazna"
-          @quiz.validates_unique [:name, :creator_id], message: "Već imate kviz s imenom #{@quiz.name.inspect}"
+          @quiz.validates_presence [:name, :category]
+          @quiz.validates_unique [:name, :creator_id],
+            message: "is already taken (you already have a quiz with that name)"
 
           Utils.valid!(@quiz)
         end
