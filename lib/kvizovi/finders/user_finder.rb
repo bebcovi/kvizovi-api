@@ -6,7 +6,7 @@ module Kvizovi
       model Models::User
 
       def typeahead(q:, count: 5)
-        dataset.where{name =~ /#{q}/i}.limit(count)
+        dataset.where{name.ilike("%#{q}%")}.limit(count)
       end
     end
   end
