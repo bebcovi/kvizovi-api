@@ -22,6 +22,7 @@ PATH
       mini_magick (~> 4.2)
       pg
       puma (~> 2.12)
+      rack-cors
       refile (>= 0.5.5)
       refile-mini_magick (~> 0.1)
       refile-s3 (~> 0.1)
@@ -119,6 +120,7 @@ GEM
     rack (1.6.4)
     rack-accept (0.4.5)
       rack (>= 0.4)
+    rack-cors (0.4.0)
     rack-protection (1.5.3)
       rack
     rack-test (0.6.3)
