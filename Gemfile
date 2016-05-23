@@ -6,3 +6,4 @@ gem "refile", github: "refile/refile"
 
 gem "pry-byebug"
 gem "ruby-prof"
+gem "rack-cors"
