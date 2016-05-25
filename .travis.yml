@@ -1,20 +1,18 @@
 language: ruby
-
-rvm: "2.2"
-
+rvm: '2.2'
 cache: bundler
-
 addons:
-  postgresql: "9.4"
-
+  postgresql: '9.4'
 env:
   global:
-    - "USER=postgres"
-
+  - USER=postgres
 services:
-  - elasticsearch
-
+- elasticsearch
 before_script:
-  - "psql -c 'create database kvizovi_test;' -U postgres"
-  - "RACK_ENV=test bundle exec rake db:migrate"
-  - "curl localhost:9200"
+- psql -c 'create database kvizovi_test;' -U postgres
+- RACK_ENV=test bundle exec rake db:migrate
+- curl localhost:9200
+notifications:
+  email: false
+  slack:
+    secure: LIvMRi1WOJb9R5btGBnjtHTM0SfNZ2LMEJ4aPSXZa0b5HTe3rSrLOVpTHCbOCljpv7AyKwoXxGbV6WAW+nzhLnImiGyAbD4f0yX98pvGjarGl1JavMxm9vwLyi9g8F4GiIn/TULpOGk5L0mMitw/P7aFZUUY115eCRsFPI4pRl5ENa3F3myqwqqIYRlrRqre3lls4ti/TxgSdCtV7yb2kutyvsDNqmN5TcxLjVj/Th3OvCSu4ApQLxBaaVVNzVAuq2n/NmFLLpd7CFjZQQse2ccbVK9tIyVTQdyWjYNSP05ZKvRpmBgxABa8IRLSOOxMsR3+/sy6nvqALNUhK4x78yNPFhb/BCWUpsFXlbhzOydXzjX+XIADFfZ2pjm10PchhM0nWg8joqUl22jGmWw/tiy6cx5R6DDrMYdtvlwSxicEfqqAsUWDNg2w02ddk/M4prj+PcXLSqijq36B9BD2btYveLX7ZIcj8CfoxVsOF4VR0EImG222zteE5AJ05twfOU4WEYZXaYh5QYU+zAI3orzGOFE1/Xc1UMbwdlh0rIfftbWArtdHIyv1uihf7OkAQQQwzCf7BTQfrujIJc5qI/h/c3kaPZeKOIGDnrzbv+rOnofLifa41weQf5ahS/gVg+K6U2+c958GxEC3m8Fl1LDgRgVsXJQDP/LjYtGbp74=
